@@ -26,7 +26,7 @@
 4. O crea uno manual con estos permisos:
    - Zone:Read
    - Page:Edit
-5. Copia el token (lo necesitarás en GitHub) --> cfut_bB0wzZBh8bMfxSKgQMJG2WBl8uVujMfW10xNAdw714157112
+5. Copia el token (lo necesitarás en GitHub)
 
 ---
 
