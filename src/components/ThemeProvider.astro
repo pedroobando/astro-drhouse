@@ -1,0 +1,20 @@
+---
+// src/components/ThemeProvider.astro - Proveedor de Tema
+interface Props {
+  theme?: string;
+}
+
+const { theme = "pediatra" } = Astro.props;
+---
+
+<script is:inline define:vars={{ theme }}>
+  // Aplicar tema inmediatamente para evitar flash de contenido sin estilo (FOUT)
+  (function() {
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+
+<!-- Metadatos del tema para uso en componentes -->
+<meta name="theme-color" content={theme === 'pediatra' ? '#0ea5e9' : 
+                                    theme === 'ginecologo' ? '#ec4899' : 
+                                    theme === 'cirujano' ? '#1e40af' : '#0369a1'} />

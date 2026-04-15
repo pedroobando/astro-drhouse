@@ -1,0 +1,110 @@
+{
+  "id": "dr-dicampli",
+  "name": "Mario Antonio Di Campli-Palermo",
+  "title": "Dr.",
+  "specialties": ["Pediatría General", "Alergología Pediátrica"],
+  "experience": 38,
+  "formation": [
+    {
+      "degree": "Doctor en Medicina (MD)",
+      "institution": "Universidad Central de Venezuela",
+      "year": 1985,
+      "country": "Venezuela"
+    },
+    {
+      "degree": "Especialización en Pediatría",
+      "institution": "Hospital de Niños J.M. de los Ríos",
+      "year": 1990,
+      "country": "Venezuela"
+    },
+    {
+      "degree": "Fellowship en Inmunología y Alergia",
+      "institution": "Universidad de Florencia",
+      "year": 1993,
+      "country": "Italia"
+    },
+    {
+      "degree": "Fellowship en Inmunodeficiencias Primarias",
+      "institution": "Johns Hopkins Hospital",
+      "year": 1995,
+      "country": "USA"
+    }
+  ],
+  "certifications": [
+    {
+      "title": "Miembro de la Academia Americana de Alergia, Asma e Inmunología (AAAAI)",
+      "institution": "AAAAI",
+      "year": 1996
+    },
+    {
+      "title": "Certificación en Pediatría - Consejo Venezolano de Especialidades Médicas",
+      "institution": "CVEM",
+      "year": 1991
+    }
+  ],
+  "publications": [
+    {
+      "title": "Primary Immunodeficiency Disorders in Venezuelan Children",
+      "journal": "Journal of Clinical Immunology",
+      "year": 1998,
+      "impactFactor": 8.5
+    },
+    {
+      "title": "Prevalence of Atopic Dermatitis in Pediatric Patients",
+      "journal": "Pediatric Allergy and Immunology",
+      "year": 2003,
+      "impactFactor": 7.2
+    },
+    {
+      "title": "Food Allergy Patterns in Latin American Children",
+      "journal": "Allergy",
+      "year": 2008,
+      "impactFactor": 14.2
+    },
+    {
+      "title": "Asthma Management Guidelines for Primary Care",
+      "journal": "Archives of Disease in Childhood",
+      "year": 2012,
+      "impactFactor": 4.5
+    }
+  ],
+  "teaching": [
+    {
+      "position": "Profesor Titular de Pediatría",
+      "institution": "Universidad Central de Venezuela",
+      "period": "1998 - Presente"
+    },
+    {
+      "position": "Jefe de Residentes de Pediatría",
+      "institution": "Hospital Universitario de Caracas",
+      "period": "1995 - 2005"
+    }
+  ],
+  "theme": "pediatra",
+  "contact": {
+    "phone": "+58 281 555 0500",
+    "whatsapp": "+58 414 345 6789",
+    "email": "consultas@drdicampli-pediatria.com",
+    "address": "Av. Bolívar, Centro Médico Lechería, Piso 3, Consultorio 305, Lechería, Anzoátegui",
+    "social": {
+      "instagram": "@drdicampli",
+      "facebook": "DrDiCampliPediatria"
+    }
+  },
+  "clinics": [
+    {
+      "name": "Centro Médico Lechería",
+      "address": "Av. Bolívar, Piso 3, Consultorio 305, Lechería",
+      "phone": "+58 281 555 0500"
+    },
+    {
+      "name": "Clínica El Ávila",
+      "address": "Av. Principal de Lechería, Lechería",
+      "phone": "+58 281 555 0600"
+    },
+    {
+      "name": "Hospital de Clínicas Caroní",
+      "address": "Puerto La Cruz, Anzoátegui"
+    }
+  ]
+}

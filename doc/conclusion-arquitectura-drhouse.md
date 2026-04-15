@@ -1,6 +1,6 @@
 ---
 created: 2026-04-14
-updated: 2026-04-14T12:45:00
+updated: 2026-04-14T15:30:00
 description: Documento de conclusión arquitectónica y técnica del sistema DrHouse - Sitio Web Multipágina para profesionales de la salud. Incluye decisiones estratégicas, stack tecnológico, estructura de datos con Content Collections, sistema de theming y preparación para RAG/chatbot IA.
 author: Pedro Obando
 tags:
@@ -164,10 +164,9 @@ Servicios →   Sobre Mí
 ### 3.2 Estructura de Directorios
 
 ```
-drlandingp/
+drhouse/
 ├── src/
 │   ├── content/                    ← Content Collections (DATOS)
-│   │   ├── config.ts              ← Schemas Zod validados
 │   │   ├── doctors/
 │   │   │   └── dr-dicampli.json   ← Datos estructurados del médico
 │   │   ├── services/
@@ -207,8 +206,10 @@ drlandingp/
 │   │   ├── global.css             ← Estilos globales
 │   │   └── themes.css             ← Variables CSS por tema
 │   │
-│   └── lib/
-│       └── utils.ts               ← Utilidades helper
+│   ├── lib/
+│   │   └── utils.ts               ← Utilidades helper
+│   │
+│   └── content.config.ts          ← Schemas Zod validados (Astro 6+)
 │
 ├── public/
 │   ├── images/
@@ -218,7 +219,6 @@ drlandingp/
 │   └── favicon.svg
 │
 ├── astro.config.mjs               ← Configuración Astro
-├── tailwind.config.ts             ← Config Tailwind v4
 ├── tsconfig.json                  ← Config TypeScript
 └── package.json
 ```
@@ -246,10 +246,14 @@ drlandingp/
 | **Listas estructuradas** | JSON | Formación académica, publicaciones | Mantiene estructura consistente |
 | **Configuración** | JSON | Colores del tema, fuentes | Fácil de cambiar entre médicos |
 
-### 4.3 Schemas de Datos (Zod)
+### 4.3 Schemas de Datos (Zod) - Astro 6
 
 ```typescript
-// src/content/config.ts
+// src/content.config.ts
+import { defineCollection } from 'astro:content';
+import { file, glob } from 'astro/loaders';
+import { z } from 'astro/zod';
+
 const doctors = defineCollection({
   loader: file('src/content/doctors/dr-dicampli.json'),
   schema: z.object({
@@ -294,6 +298,8 @@ const services = defineCollection({
     keywords: z.array(z.string()).default([]) // Para SEO y futuro RAG
   })
 });
+
+export const collections = { doctors, services };
 ```
 
 ### 4.4 Ejemplo de Datos: Dr. Di Campli
@@ -473,7 +479,7 @@ Los archivos **JSON + Markdown** son el **formato ideal**:
 ## 8. Plan de Implementación
 
 ### Fase 1: Fundamentos (Días 1-3)
-- [ ] Configurar Content Collections (`src/content/config.ts`)
+- [ ] Configurar Content Collections (`src/content.config.ts`)
 - [ ] Crear archivos de datos del Dr. Di Campli (JSON + Markdown)
 - [ ] Configurar tema de colores (pediatra)
 - [ ] Layout principal y componentes base (Header, Footer)
@@ -547,4 +553,5 @@ Los archivos **JSON + Markdown** son el **formato ideal**:
 
 ## Changelog
 
+- **2026-04-14**: **BREAKING CHANGE** - Actualizado a Astro 6 Content Collections API. El archivo de configuración se movió de `src/content/config.ts` a `src/content.config.ts`. Los loaders (`glob`, `file`) ahora se importan desde `astro/loaders`.
 - **2026-04-14**: Corrección - Tailwind CSS v4 es la versión estable actual (v4.2), no beta. Actualizado enlace a documentación oficial de instalación con Vite.
