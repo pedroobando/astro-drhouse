@@ -1,0 +1,86 @@
+---
+// src/pages/404.astro
+// Página de error 404 personalizada
+
+import MainLayout from '../layouts/MainLayout.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+---
+
+<MainLayout 
+  title="Página no encontrada"
+  description="La página que buscas no existe. Encuentra lo que necesitas en nuestro sitio."
+>
+  <section class="min-h-[70vh] flex items-center justify-center py-20">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      {/* Icono grande */}
+      <div class="w-32 h-32 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center">
+        <Icon name="medical-kit" size={64} class="text-primary" />
+      </div>
+      
+      {/* Código de error */}
+      <div class="text-8xl font-bold text-primary/20 mb-4">404</div>
+      
+      {/* Título */}
+      <h1 class="text-3xl md:text-4xl font-bold text-text mb-4">
+        Página no encontrada
+      </h1>
+      
+      {/* Descripción */}
+      <p class="text-lg text-text-muted mb-8 max-w-lg mx-auto">
+        Lo sentimos, la página que estás buscando no existe o ha sido movida. 
+        Pero no te preocupes, podemos ayudarte a encontrar lo que necesitas.
+      </p>
+      
+      {/* Enlaces útiles */}
+      <div class="space-y-4">
+        <Button 
+          variant="primary" 
+          size="lg"
+          href="/"
+          icon="arrow-left"
+          iconPosition="left"
+        >
+          Volver al inicio
+        </Button>
+        
+        <div class="pt-8 border-t border-border">
+          <p class="text-text-muted mb-4">O puedes ir directamente a:</p>
+          
+          <div class="flex flex-wrap justify-center gap-3">
+            <Button variant="outline" size="sm" href="/#servicios">
+              Servicios
+            </Button>
+            <Button variant="outline" size="sm" href="/#contacto">
+              Contacto
+            </Button>
+            <Button variant="outline" size="sm" href="/#sobre-mi">
+              Sobre el Dr.
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Mensaje de emergencia */}
+      <div class="mt-12 p-6 bg-red-50 rounded-2xl border border-red-100">
+        <div class="flex items-center justify-center gap-2 text-red-600 mb-2">
+          <Icon name="exclamation-triangle" size={20} />
+          <span class="font-semibold">¿Es una emergencia médica?</span>
+        </div>
+        <p class="text-red-600 text-sm mb-4">
+          Esta página es solo para información. Si tienes una emergencia, 
+          contacta directamente con el doctor o acude al servicio de emergencias más cercano.
+        </p>
+        <Button 
+          variant="primary" 
+          size="sm"
+          href="tel:+584143456789"
+          class="bg-red-500 hover:bg-red-600"
+        >
+          <Icon name="phone" size={16} class="mr-2" />
+          Llamar de emergencia
+        </Button>
+      </div>
+    </div>
+  </section>
+</MainLayout>

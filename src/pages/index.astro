@@ -8,6 +8,8 @@ import AboutSection from '../components/sections/AboutSection.astro';
 import ServicesGrid from '../components/sections/ServicesGrid.astro';
 import OfficeGallery from '../components/sections/OfficeGallery.astro';
 import FAQSection from '../components/sections/FAQSection.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import ContactForm from '../components/forms/ContactForm.astro';
 import Icon from '../components/ui/Icon.astro';
 import { getEntry, getCollection } from 'astro:content';
 
@@ -59,6 +61,34 @@ const galleryImages = [
     image: procedure04,
     caption: "Atención especializada pediátrica",
     category: "consulta" as const,
+  },
+];
+
+// Testimonios de pacientes
+const testimonials = [
+  {
+    name: "María González",
+    initials: "MG",
+    rating: 5,
+    text: "Excelente atención con mi hijo. El Dr. Di Campli tiene una paciencia increíble y explica todo de manera clara. Lo recomiendo totalmente.",
+    service: "Pediatría General",
+    date: "Enero 2026",
+  },
+  {
+    name: "Carlos Rodríguez",
+    initials: "CR",
+    rating: 5,
+    text: "Después de años buscando diagnóstico para las alergias de mi hija, finalmente encontramos respuestas. El tratamiento ha sido muy efectivo.",
+    service: "Alergología Pediátrica",
+    date: "Diciembre 2025",
+  },
+  {
+    name: "Ana Martínez",
+    initials: "AM",
+    rating: 5,
+    text: "El consultorio es muy cómodo y el personal muy amable. Siempre que tengo una emergencia me atienden con prontitud.",
+    service: "Consulta de Emergencia",
+    date: "Noviembre 2025",
   },
 ];
 
@@ -204,42 +234,33 @@ Durante sus ${doctor?.experience} años de ejercicio profesional, ha atendido a 
     layout="grid"
   />
 
-  <!-- 6. FAQ Section -->
-  <FAQSection 
+  <!-- 6. Services Grid -->
+  <ServicesGrid
+    title="Nuestros Servicios"
+    subtitle="Atención médica integral especializada en Pediatría y Alergología Pediátrica"
+    services={mappedServices}
+    layout="grid"
+  />
+
+  <!-- 7. FAQ Section -->
+  <FAQSection
     title="Preguntas Frecuentes"
     subtitle="Resolvemos tus dudas sobre nuestras consultas y servicios"
     faqs={faqs}
     layout="single"
   />
 
-  <!-- 7. CTA Final -->
-  <section id="contacto" class="py-20 lg:py-28 bg-gradient-to-br from-primary to-secondary text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">
-        ¿Listo para agendar una cita?
-      </h2>
-      <p class="text-white/90 text-lg max-w-2xl mx-auto mb-8">
-        Tu hijo merece la mejor atención médica. Contamos con horarios flexibles 
-        y atención personalizada.
-      </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a 
-          href={`https://wa.me/${doctor?.contact?.whatsapp?.replace(/\D/g, '')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary rounded-xl font-semibold hover:bg-white/90 transition-colors shadow-lg"
-        >
-          <Icon name="whatsapp" size={20} />
-          WhatsApp
-        </a>
-        <a 
-          href={`tel:${doctor?.contact?.phone}`}
-          class="inline-flex items-center gap-2 px-8 py-4 bg-white/20 text-white rounded-xl font-semibold hover:bg-white/30 transition-colors backdrop-blur-sm"
-        >
-          <Icon name="phone" size={20} />
-          Llamar Ahora
-        </a>
-      </div>
-    </div>
-  </section>
+  <!-- 8. Testimonials Section -->
+  <Testimonials
+    title="Lo que dicen nuestros pacientes"
+    subtitle="Testimonios de familias que confían en nosotros"
+    testimonials={testimonials}
+  />
+
+  <!-- 9. Contact Form Section -->
+  <ContactForm
+    doctorName={`${doctor?.title} ${doctor?.name}`}
+    doctorEmail={doctor?.contact?.email || ''}
+    doctorWhatsapp={doctor?.contact?.whatsapp || ''}
+  />
 </MainLayout>

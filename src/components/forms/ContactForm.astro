@@ -1,0 +1,304 @@
+---
+// src/components/forms/ContactForm.astro
+// Formulario de contacto funcional con validación
+
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  doctorName: string;
+  doctorEmail: string;
+  doctorWhatsapp: string;
+  submitEndpoint?: string;
+}
+
+const { doctorName, doctorEmail, doctorWhatsapp, submitEndpoint = '/api/contact' } = Astro.props;
+
+const whatsappNumber = doctorWhatsapp.replace(/\D/g, '');
+const whatsappLink = `https://wa.me/${whatsappNumber}`;
+---
+
+<section id="contacto" class="py-20 lg:py-28 bg-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+      
+      {/* Info de contacto */}
+      <div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+          <Icon name="email" size={16} />
+          <span>Contacto</span>
+        </div>
+        
+        <h2 class="text-3xl lg:text-4xl font-bold text-text mb-4">
+          ¿Tienes preguntas?<br />
+          <span class="text-primary">Escríbenos</span>
+        </h2>
+        
+        <p class="text-lg text-text-muted mb-8">
+          Completa el formulario y te responderemos en menos de 24 horas. 
+          También puedes contactarnos directamente por WhatsApp o teléfono.
+        </p>
+        
+        {/* Métodos de contacto directo */}
+        <div class="space-y-4">
+          <a 
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-4 p-4 bg-green-50 rounded-xl border border-green-100 hover:bg-green-100 transition-colors group"
+          >
+            <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-white">
+              <Icon name="whatsapp" size={24} />
+            </div>
+            <div>
+              <div class="font-medium text-text">WhatsApp</div>
+              <div class="text-sm text-text-muted group-hover:text-green-600 transition-colors">
+                {doctorWhatsapp}
+              </div>
+            </div>
+            <Icon name="arrow-right" size={20} class="ml-auto text-green-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </a>
+          
+          <a 
+            href={`tel:${doctorWhatsapp}`}
+            class="flex items-center gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10 hover:bg-primary/10 transition-colors group"
+          >
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white">
+              <Icon name="phone" size={24} />
+            </div>
+            <div>
+              <div class="font-medium text-text">Teléfono</div>
+              <div class="text-sm text-text-muted group-hover:text-primary transition-colors">
+                {doctorWhatsapp}
+              </div>
+            </div>
+            <Icon name="arrow-right" size={20} class="ml-auto text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+          </a>
+        </div>
+      </div>
+      
+      {/* Formulario */}
+      <div class="bg-surface rounded-2xl p-6 lg:p-8 shadow-lg border border-border">
+        <form 
+          id="contact-form"
+          class="space-y-6"
+          data-endpoint={submitEndpoint}
+        >
+          {/* Nombre */}
+          <div>
+            <label for="name" class="block text-sm font-medium text-text mb-2">
+              Nombre completo <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              minlength="3"
+              class="w-full px-4 py-3 rounded-lg border border-border bg-background text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              placeholder="Ej: María González"
+            />
+            <p class="text-red-500 text-sm mt-1 hidden" data-error="name"></p>
+          </div>
+          
+          {/* Email */}
+          <div>
+            <label for="email" class="block text-sm font-medium text-text mb-2">
+              Correo electrónico <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="w-full px-4 py-3 rounded-lg border border-border bg-background text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              placeholder="ejemplo@correo.com"
+            />
+            <p class="text-red-500 text-sm mt-1 hidden" data-error="email"></p>
+          </div>
+          
+          {/* Teléfono */}
+          <div>
+            <label for="phone" class="block text-sm font-medium text-text mb-2">
+              Teléfono
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="w-full px-4 py-3 rounded-lg border border-border bg-background text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              placeholder="+58 414 123 4567"
+            />
+          </div>
+          
+          {/* Motivo de consulta */}
+          <div>
+            <label for="subject" class="block text-sm font-medium text-text mb-2">
+              Motivo de consulta <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="subject"
+              name="subject"
+              required
+              class="w-full px-4 py-3 rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            >
+              <option value="">Selecciona una opción</option>
+              <option value="pediatria">Consulta de Pediatría</option>
+              <option value="alergia">Consulta de Alergología</option>
+              <option value="primera">Primera consulta</option>
+              <option value="seguimiento">Seguimiento</option>
+              <option value="emergencia">Emergencia</option>
+              <option value="otro">Otro</option>
+            </select>
+            <p class="text-red-500 text-sm mt-1 hidden" data-error="subject"></p>
+          </div>
+          
+          {/* Mensaje */}
+          <div>
+            <label for="message" class="block text-sm font-medium text-text mb-2">
+              Mensaje <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              minlength="10"
+              rows="4"
+              class="w-full px-4 py-3 rounded-lg border border-border bg-background text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+              placeholder="Describe tu consulta o los síntomas del paciente..."
+            ></textarea>
+            <p class="text-red-500 text-sm mt-1 hidden" data-error="message"></p>
+          </div>
+          
+          {/* Checkbox de privacidad */}
+          <div class="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="privacy"
+              name="privacy"
+              required
+              class="w-5 h-5 rounded border-border text-primary focus:ring-primary mt-0.5"
+            />
+            <label for="privacy" class="text-sm text-text-muted">
+              Acepto la <a href="#" class="text-primary hover:underline">política de privacidad</a> y el tratamiento de mis datos para responder mi consulta médica. <span class="text-red-500">*</span>
+            </label>
+          </div>
+          <p class="text-red-500 text-sm hidden" data-error="privacy"></p>
+          
+          {/* Botón de enviar */}
+          <Button 
+            variant="primary" 
+            size="lg" 
+            type="submit"
+            class="w-full"
+            icon="arrow-right"
+            iconPosition="right"
+          >
+            Enviar mensaje
+          </Button>
+          
+          {/* Mensaje de éxito */}
+          <div id="form-success" class="hidden p-4 bg-green-50 rounded-lg border border-green-200">
+            <div class="flex items-center gap-2 text-green-700">
+              <Icon name="check-circle" size={20} />
+              <span class="font-medium">¡Mensaje enviado con éxito!</span>
+            </div>
+            <p class="text-green-600 text-sm mt-1">
+              Te contactaremos pronto para confirmar tu cita.
+            </p>
+          </div>
+          
+          {/* Mensaje de error */}
+          <div id="form-error" class="hidden p-4 bg-red-50 rounded-lg border border-red-200">
+            <div class="flex items-center gap-2 text-red-700">
+              <Icon name="exclamation-triangle" size={20} />
+              <span class="font-medium">Error al enviar</span>
+            </div>
+            <p class="text-red-600 text-sm mt-1" data-error-message>
+              Por favor intenta de nuevo o contáctanos por WhatsApp.
+            </p>
+          </div>
+        </form>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<script>
+  // Form validation and submission
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const successMessage = document.getElementById('form-success');
+    const errorMessage = document.getElementById('form-error');
+    
+    if (!form) return;
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Reset errors
+      document.querySelectorAll('[data-error]').forEach(el => el.classList.add('hidden'));
+      successMessage?.classList.add('hidden');
+      errorMessage?.classList.add('hidden');
+      
+      // Validate
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+      
+      let hasErrors = false;
+      
+      // Name validation
+      if (!data.name || (data.name as string).length < 3) {
+        document.querySelector('[data-error="name"]')?.classList.remove('hidden');
+        document.querySelector('[data-error="name"]')!.textContent = 'El nombre debe tener al menos 3 caracteres';
+        hasErrors = true;
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!data.email || !emailRegex.test(data.email as string)) {
+        document.querySelector('[data-error="email"]')?.classList.remove('hidden');
+        document.querySelector('[data-error="email"]')!.textContent = 'Ingresa un correo válido';
+        hasErrors = true;
+      }
+      
+      // Subject validation
+      if (!data.subject) {
+        document.querySelector('[data-error="subject"]')?.classList.remove('hidden');
+        document.querySelector('[data-error="subject"]')!.textContent = 'Selecciona un motivo de consulta';
+        hasErrors = true;
+      }
+      
+      // Message validation
+      if (!data.message || (data.message as string).length < 10) {
+        document.querySelector('[data-error="message"]')?.classList.remove('hidden');
+        document.querySelector('[data-error="message"]')!.textContent = 'El mensaje debe tener al menos 10 caracteres';
+        hasErrors = true;
+      }
+      
+      if (hasErrors) return;
+      
+      // Submit form
+      try {
+        const endpoint = form.dataset.endpoint || '/api/contact';
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        
+        if (response.ok) {
+          form.reset();
+          successMessage?.classList.remove('hidden');
+          successMessage?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          throw new Error('Server error');
+        }
+      } catch (error) {
+        errorMessage?.classList.remove('hidden');
+        errorMessage?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+</script>

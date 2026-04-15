@@ -1,0 +1,236 @@
+---
+// src/pages/servicios/[category].astro
+// Página dinámica para cada servicio médico
+
+import MainLayout from '../../layouts/MainLayout.astro';
+import Container from '../../components/ui/Container.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+// Generar rutas estáticas para cada servicio
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  
+  return services.map((service) => ({
+    params: { category: service.data.category },
+    props: { 
+      service,
+      content: service.body,
+    },
+  }));
+}
+
+const { service, content } = Astro.props;
+
+// Obtener datos del doctor para contacto
+const doctorEntry = await getEntry('doctors', 'dr-dicampli');
+const doctor = doctorEntry?.data;
+
+// FAQs específicas por servicio (podrían venir de Content Collections en el futuro)
+const serviceFAQs: Record<string, Array<{q: string, a: string}>> = {
+  'pediatria': [
+    { q: "¿A qué edad debo llevar a mi hijo por primera vez al pediatra?", a: "Se recomienda la primera visita dentro de la primera semana de vida, luego chequeos mensuales hasta el año, y posteriormente según el calendario de vacunación y desarrollo." },
+    { q: "¿Cuánto dura una consulta pediátrica?", a: "La primera consulta dura aproximadamente 45 minutos. Las consultas de control suelen durar 20-30 minutos." },
+    { q: "¿Qué debo llevar a la consulta pediátrica?", a: "Carnet de vacunación, cédula de identidad del niño, resultados de exámenes previos si los tiene, y la libreta de crecimiento si la tiene." },
+  ],
+  'alergologia': [
+    { q: "¿Cómo se realizan las pruebas de alergia en niños?", a: "Realizamos pruebas cutáneas (skin prick test) que son rápidas, seguras y prácticamente indoloras. Los resultados están listos en 15-20 minutos." },
+    { q: "¿Desde qué edad se pueden hacer pruebas de alergia?", a: "Las pruebas cutáneas pueden realizarse desde los 6 meses de edad, dependiendo de los síntomas y la indicación médica." },
+    { q: "¿Cuánto tiempo antes debo suspender los antialérgicos?", a: "Generalmente se solicita suspender antihistamínicos 5-7 días antes de la prueba para obtener resultados precisos." },
+  ],
+};
+
+const faqs = serviceFAQs[service.data.category] || [];
+---
+
+<MainLayout 
+  title={`${service.data.title} | ${doctor?.title} ${doctor?.name}`}
+  description={`${service.body?.slice(0, 160)}... Servicio especializado de ${service.data.title} en Lechería, Anzoátegui.`}
+>
+  {/* Hero del servicio */}
+  <section class="relative py-20 lg:py-28 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <Container>
+      {/* Breadcrumb */}
+      <nav class="text-sm text-text-muted mb-8">
+        <a href="/" class="hover:text-primary transition-colors">Inicio</a>
+        <span class="mx-2">/</span>
+        <a href="/#servicios" class="hover:text-primary transition-colors">Servicios</a>
+        <span class="mx-2">/</span>
+        <span class="text-text">{service.data.title}</span>
+      </nav>
+
+      <div class="max-w-4xl">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+          <Icon name="stethoscope" size={16} />
+          <span>Servicio Especializado</span>
+        </div>
+        
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-text mb-6">
+          {service.data.title}
+        </h1>
+        
+        <p class="text-xl text-text-muted mb-8">
+          Atención especializada con {doctor?.experience} años de experiencia en {doctor?.specialties?.join(' y ')}
+        </p>
+        
+        <div class="flex flex-wrap gap-4">
+          <Button 
+            variant="primary" 
+            size="lg"
+            href="/contacto"
+            icon="arrow-right"
+            iconPosition="right"
+          >
+            Agendar Consulta
+          </Button>
+          <Button 
+            variant="outline" 
+            size="lg"
+            href={`https://wa.me/${doctor?.contact?.whatsapp?.replace(/\D/g, '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Consultar por WhatsApp
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  {/* Contenido del servicio */}
+  <section class="py-16 lg:py-20 bg-background">
+    <Container>
+      <div class="grid lg:grid-cols-3 gap-12">
+        {/* Contenido principal */}
+        <div class="lg:col-span-2">
+          <article class="prose prose-lg max-w-none text-text-muted">
+            {content ? (
+              <div set:html={content} />
+            ) : (
+              <p>Información detallada del servicio próximamente.</p>
+            )}
+          </article>
+          
+          {/* FAQs específicas */}
+          {faqs.length > 0 && (
+            <div class="mt-12 pt-12 border-t border-border">
+              <h2 class="text-2xl font-bold text-text mb-6">
+                Preguntas frecuentes sobre {service.data.title}
+              </h2>
+              <div class="space-y-4">
+                {faqs.map((faq, index) => (
+                  <div class="border border-border rounded-xl overflow-hidden" data-faq-item>
+                    <button 
+                      class="w-full flex items-center justify-between p-4 text-left bg-surface hover:bg-primary/5 transition-colors"
+                      data-faq-trigger
+                      aria-expanded={index === 0 ? "true" : "false"}
+                    >
+                      <span class="font-medium text-text pr-4">{faq.q}</span>
+                      <Icon name="chevron-down" size={20} class="text-primary flex-shrink-0 transition-transform" data-faq-icon />
+                    </button>
+                    <div 
+                      class={index === 0 ? "p-4 pt-0" : "hidden p-4 pt-0"}
+                      data-faq-content
+                    >
+                      <p class="text-text-muted">{faq.a}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Sidebar */}
+        <div class="space-y-6">
+          {/* CTA Card */}
+          <div class="bg-surface rounded-2xl p-6 shadow-lg border border-border">
+            <h3 class="font-bold text-text mb-4">¿Necesitas este servicio?</h3>
+            <p class="text-text-muted text-sm mb-6">
+              Agenda tu consulta hoy mismo. Tu salud es nuestra prioridad.
+            </p>
+            <Button 
+              variant="primary" 
+              class="w-full"
+              href="/contacto"
+            >
+              Agendar Ahora
+            </Button>
+          </div>
+          
+          {/* Info del doctor */}
+          <div class="bg-primary/5 rounded-2xl p-6 border border-primary/10">
+            <h3 class="font-bold text-text mb-4">Especialista</h3>
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+                <Icon name="stethoscope" size={32} class="text-primary" />
+              </div>
+              <div>
+                <div class="font-bold text-text">{doctor?.title} {doctor?.name}</div>
+                <div class="text-sm text-text-muted">{doctor?.specialties?.join(', ')}</div>
+                <div class="text-sm text-primary font-medium">{doctor?.experience} años de experiencia</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Horarios */}
+          <div class="bg-surface rounded-2xl p-6 shadow-sm border border-border">
+            <h3 class="font-bold text-text mb-4">Horarios de atención</h3>
+            <ul class="space-y-2 text-sm">
+              <li class="flex justify-between">
+                <span class="text-text-muted">Lunes - Viernes</span>
+                <span class="text-text font-medium">8:00 - 17:00</span>
+              </li>
+              <li class="flex justify-between">
+                <span class="text-text-muted">Sábados</span>
+                <span class="text-text font-medium">9:00 - 13:00</span>
+              </li>
+              <li class="flex justify-between">
+                <span class="text-text-muted">Domingos</span>
+                <span class="text-text font-medium">Cerrado</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  {/* CTA Final */}
+  <section class="py-16 bg-gradient-to-r from-primary to-secondary">
+    <Container>
+      <div class="text-center text-white">
+        <h2 class="text-3xl font-bold mb-4">¿Listo para agendar tu consulta?</h2>
+        <p class="text-white/90 mb-8 max-w-2xl mx-auto">
+          Tu salud es lo más importante. Contamos con horarios flexibles y atención personalizada.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <Button 
+            variant="primary" 
+            size="lg"
+            href="/contacto"
+            class="bg-white text-primary hover:bg-white/90"
+          >
+            Agendar Consulta
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <script>
+    // FAQ accordion functionality
+    document.querySelectorAll('[data-faq-trigger]').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const content = trigger.nextElementSibling;
+        const icon = trigger.querySelector('[data-faq-icon]');
+        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+        
+        trigger.setAttribute('aria-expanded', String(!isExpanded));
+        content?.classList.toggle('hidden');
+        icon?.classList.toggle('rotate-180');
+      });
+    });
+  </script>
+</MainLayout>

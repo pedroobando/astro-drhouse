@@ -41,6 +41,64 @@ const doctor = doctorEntry?.data;
 
     <!-- Preconnect para performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <!-- Schema.org / JSON-LD para SEO Local -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "MedicalBusiness",
+          "@id": "https://drhouse-medical.com/#business",
+          "name": `${doctor?.title} ${doctor?.name}`,
+          "description": description,
+          "url": "https://drhouse-medical.com",
+          "telephone": doctor?.contact?.phone,
+          "email": doctor?.contact?.email,
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": doctor?.contact?.address,
+            "addressLocality": "Lechería",
+            "addressRegion": "Anzoátegui",
+            "addressCountry": "VE"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "10.1858",
+            "longitude": "-64.6852"
+          },
+          "openingHours": ["Mo-Fr 08:00-17:00", "Sa 09:00-13:00"],
+          "priceRange": "$$",
+          "image": "https://drhouse-medical.com/images/doctor.jpg",
+          "sameAs": [
+            doctor?.contact?.social?.instagram,
+            doctor?.contact?.social?.facebook
+          ].filter(Boolean)
+        },
+        {
+          "@type": "Physician",
+          "@id": "https://drhouse-medical.com/#physician",
+          "name": `${doctor?.title} ${doctor?.name}`,
+          "medicalSpecialty": doctor?.specialties,
+          "description": `${doctor?.experience} años de experiencia en ${doctor?.specialties?.join(' y ')}`,
+          "alumniOf": doctor?.formation?.map(f => ({
+            "@type": "EducationalOrganization",
+            "name": f.institution,
+            "department": f.degree
+          })),
+          "memberOf": doctor?.certifications?.map(c => ({
+            "@type": "Organization",
+            "name": c.institution
+          })),
+          "worksFor": {
+            "@id": "https://drhouse-medical.com/#business"
+          },
+          "areaServed": {
+            "@type": "City",
+            "name": "Lechería, Barcelona, Puerto La Cruz"
+          }
+        }
+      ]
+    })} />
   </head>
   <body class="bg-background text-text min-h-screen flex flex-col">
     <!-- Header -->
