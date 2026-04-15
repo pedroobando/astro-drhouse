@@ -1,0 +1,79 @@
+---
+// src/components/sections/FeaturesBar.astro
+// Barra de características/value propositions
+
+import Container from '../ui/Container.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  features?: Feature[];
+  variant?: 'light' | 'dark' | 'colored' | 'gradient';
+  title?: string;
+  subtitle?: string;
+}
+
+const { 
+  features = [], 
+  variant = 'light',
+  title,
+  subtitle 
+} = Astro.props;
+
+// Variantes de estilo
+const variantClasses = {
+  light: 'bg-surface',
+  dark: 'bg-text text-white',
+  colored: 'bg-primary text-white',
+  gradient: 'bg-gradient-to-r from-primary to-secondary text-white',
+};
+
+const iconBgClasses = {
+  light: 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white',
+  dark: 'bg-white/10 text-white group-hover:bg-white group-hover:text-text',
+  colored: 'bg-white/20 text-white group-hover:bg-white group-hover:text-primary',
+  gradient: 'bg-white/20 text-white group-hover:bg-white group-hover:text-primary',
+};
+
+const textClasses = {
+  light: 'text-text',
+  dark: 'text-white',
+  colored: 'text-white',
+  gradient: 'text-white',
+};
+
+const subtitleClasses = {
+  light: 'text-text-muted',
+  dark: 'text-white/80',
+  colored: 'text-white/90',
+  gradient: 'text-white/90',
+};
+---
+
+<section class={`${variantClasses[variant]} py-12 lg:py-16`}>
+  <Container>
+    {(title || subtitle) && (
+      <div class="text-center mb-10 lg:mb-12">
+        {title && <h2 class={`text-2xl lg:text-3xl font-bold ${textClasses[variant]} mb-3`}>{title}</h2>}
+        {subtitle && <p class={`text-lg ${subtitleClasses[variant]} max-w-2xl mx-auto`}>{subtitle}</p>}
+      </div>
+    )}
+    
+    <div class={`grid gap-6 lg:gap-8 ${features.length === 3 ? 'md:grid-cols-3' : features.length === 4 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
+      {features.map((feature) => (
+        <div class="group text-center p-6 rounded-xl transition-all duration-300 hover:scale-105">
+          <div class={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-colors duration-300 ${iconBgClasses[variant]}`}>
+            <Icon name={feature.icon} size={32} />
+          </div>
+          <h3 class={`text-lg font-bold ${textClasses[variant]} mb-2`}>{feature.title}</h3>
+          <p class={`text-sm ${subtitleClasses[variant]} leading-relaxed`}>{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </Container>
+</section>

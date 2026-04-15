@@ -1,0 +1,114 @@
+---
+// src/components/sections/ServicesGrid.astro
+// Grid de servicios médicos
+
+import Container from '../ui/Container.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+
+interface Service {
+  title: string;
+  description: string;
+  icon?: string;
+  slug?: string;
+  featured?: boolean;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  services: Service[];
+  layout?: 'grid' | 'asymmetric' | 'cards';
+  showCta?: boolean;
+  ctaText?: string;
+  ctaHref?: string;
+}
+
+const { 
+  title = "Nuestros Servicios", 
+  subtitle,
+  services = [],
+  layout = 'grid',
+  showCta = true,
+  ctaText = "Ver todos los servicios",
+  ctaHref = "#contacto"
+} = Astro.props;
+
+// Layout classes
+const layoutClasses = {
+  grid: 'grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8',
+  asymmetric: 'grid md:grid-cols-2 gap-6 lg:gap-8',
+  cards: 'grid md:grid-cols-2 lg:grid-cols-4 gap-6',
+};
+---
+
+<section id="servicios" class="py-20 lg:py-28 bg-surface">
+  <Container>
+    {/* Header */}
+    <div class="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+        <Icon name="medical-kit" size={16} />
+        <span>Servicios Especializados</span>
+      </div>
+      <h2 class="text-3xl lg:text-4xl font-bold text-text mb-4">{title}</h2>
+      {subtitle && <p class="text-lg text-text-muted">{subtitle}</p>}
+    </div>
+    
+    {/* Grid de servicios */}
+    <div class={layoutClasses[layout]}>
+      {services.map((service, index) => (
+        <article 
+          class:list={[
+            "group relative bg-background rounded-2xl border border-border overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
+            service.featured && "md:col-span-2 lg:col-span-1 ring-2 ring-primary/20"
+          ]}
+        >
+          {/* Badge destacado */}
+          {service.featured && (
+            <div class="absolute top-4 right-4 px-3 py-1 bg-primary text-white text-xs font-bold rounded-full">
+              Destacado
+            </div>
+          )}
+          
+          <div class="p-6 lg:p-8">
+            {/* Icono */}
+            <div class="w-14 h-14 mb-6 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+              <Icon name={service.icon || 'medical-kit'} size={28} />
+            </div>
+            
+            {/* Contenido */}
+            <h3 class="text-xl font-bold text-text mb-3 group-hover:text-primary transition-colors">
+              {service.title}
+            </h3>
+            <p class="text-text-muted leading-relaxed mb-6">
+              {service.description}
+            </p>
+            
+            {/* Link */}
+            {service.slug && (
+              <a 
+                href={`/servicios/${service.slug}`}
+                class="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
+              >
+                Saber más
+                <Icon name="arrow-right" size={16} />
+              </a>
+            )}
+          </div>
+          
+          {/* Barra inferior decorativa */}
+          <div class="h-1 bg-gradient-to-r from-primary to-secondary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        </article>
+      ))}
+    </div>
+    
+    {/* CTA */}
+    {showCta && (
+      <div class="text-center mt-12">
+        <Button variant="outline" size="lg" href={ctaHref} icon="arrow-right" iconPosition="right">
+          {ctaText}
+        </Button>
+      </div>
+    )}
+  </Container>
+</section>

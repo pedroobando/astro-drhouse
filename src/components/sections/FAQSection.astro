@@ -1,0 +1,210 @@
+---
+// src/components/sections/FAQSection.astro
+// Sección de preguntas frecuentes con accordion
+
+import Container from '../ui/Container.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  faqs: FAQ[];
+  layout?: 'single' | 'two-column';
+  hasImage?: boolean;
+  imageUrl?: string;
+  imageAlt?: string;
+  showCta?: boolean;
+  ctaText?: string;
+  variant?: 'light' | 'dark';
+}
+
+const { 
+  title = "Preguntas Frecuentes",
+  subtitle = "Resolvemos tus dudas sobre nuestras consultas",
+  faqs = [],
+  layout = 'single',
+  hasImage = false,
+  imageUrl,
+  imageAlt = "Doctor atendiendo paciente",
+  showCta = true,
+  ctaText = "¿Tienes otra pregunta?",
+  variant = 'light'
+} = Astro.props;
+
+// Split FAQs for two-column layout
+const midPoint = Math.ceil(faqs.length / 2);
+const leftFAQs = layout === 'two-column' ? faqs.slice(0, midPoint) : faqs;
+const rightFAQs = layout === 'two-column' ? faqs.slice(midPoint) : [];
+---
+
+<section id="faq" class:list={["py-20 lg:py-28", variant === 'dark' ? 'bg-text' : 'bg-background']}>
+  <Container>
+    <div class:list={["grid gap-12 lg:gap-16 items-start", hasImage ? 'lg:grid-cols-2' : 'grid-cols-1']}>
+      
+      {/* Imagen (opcional) */}
+      {hasImage && (
+        <div class="relative order-2 lg:order-1">
+          <div class="absolute -inset-4 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform -rotate-2"></div>
+          <div class="relative rounded-2xl overflow-hidden shadow-xl">
+            {imageUrl ? (
+              <img 
+                src={imageUrl} 
+                alt={imageAlt}
+                class="w-full h-auto object-cover aspect-[4/5]"
+                loading="lazy"
+              />
+            ) : (
+              <div class="aspect-[4/5] bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                <Icon name="users" size={64} class="text-primary/50" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* Contenido FAQ */}
+      <div class:list={["order-1", hasImage && "lg:order-2"]}>
+        {/* Header */}
+        <div class="mb-8 lg:mb-10">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+            <Icon name="information-circle" size={16} />
+            <span>FAQ</span>
+          </div>
+          <h2 class:list={["text-3xl lg:text-4xl font-bold mb-4", variant === 'dark' ? 'text-white' : 'text-text']}>
+            {title}
+          </h2>
+          {subtitle && (
+            <p class:list={["text-lg", variant === 'dark' ? 'text-white/80' : 'text-text-muted']}>
+              {subtitle}
+            </p>
+          )}
+        </div>
+        
+        {/* Accordions */}
+        <div class:list={[layout === 'two-column' && "md:grid md:grid-cols-2 gap-x-8", "space-y-4"]}>
+          {/* Columna izquierda */}
+          <div class="space-y-4">
+            {leftFAQs.map((faq, index) => (
+              <div 
+                class:list={[
+                  "border rounded-xl overflow-hidden transition-colors",
+                  variant === 'dark' ? 'border-white/10 bg-white/5' : 'border-border bg-surface'
+                ]}
+                data-accordion
+              >
+                <button 
+                  class="w-full flex items-center justify-between p-5 text-left hover:bg-primary/5 transition-colors"
+                  data-accordion-trigger
+                  aria-expanded={index === 0 ? "true" : "false"}
+                >
+                  <span class:list={["font-medium pr-4", variant === 'dark' ? 'text-white' : 'text-text']}>
+                    {faq.question}
+                  </span>
+                  <span 
+                    class:list={["flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300", variant === 'dark' ? 'bg-white/10' : 'bg-primary/10', index === 0 && 'rotate-180']}
+                    data-accordion-icon
+                  >
+                    <Icon name="chevron-down" size={18} class="text-primary" />
+                  </span>
+                </button>
+                <div 
+                  class:list={["overflow-hidden transition-all duration-300", index === 0 ? "max-h-96" : "max-h-0"]}
+                  data-accordion-content
+                >
+                  <div class:list={["p-5 pt-0 text-sm leading-relaxed", variant === 'dark' ? 'text-white/80' : 'text-text-muted']}>
+                    {faq.answer}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Columna derecha (solo en layout two-column) */}
+          {layout === 'two-column' && rightFAQs.length > 0 && (
+            <div class="space-y-4">
+              {rightFAQs.map((faq) => (
+                <div 
+                  class:list={[
+                    "border rounded-xl overflow-hidden transition-colors",
+                    variant === 'dark' ? 'border-white/10 bg-white/5' : 'border-border bg-surface'
+                  ]}
+                  data-accordion
+                >
+                  <button 
+                    class="w-full flex items-center justify-between p-5 text-left hover:bg-primary/5 transition-colors"
+                    data-accordion-trigger
+                    aria-expanded="false"
+                  >
+                    <span class:list={["font-medium pr-4", variant === 'dark' ? 'text-white' : 'text-text']}>
+                      {faq.question}
+                    </span>
+                    <span 
+                      class:list={["flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300", variant === 'dark' ? 'bg-white/10' : 'bg-primary/10']}
+                      data-accordion-icon
+                    >
+                      <Icon name="chevron-down" size={18} class="text-primary" />
+                    </span>
+                  </button>
+                  <div 
+                    class="overflow-hidden transition-all duration-300 max-h-0"
+                    data-accordion-content
+                  >
+                    <div class:list={["p-5 pt-0 text-sm leading-relaxed", variant === 'dark' ? 'text-white/80' : 'text-text-muted']}>
+                      {faq.answer}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* CTA */}
+        {showCta && (
+          <div class="mt-8 lg:mt-10">
+            <Button variant="outline" href="#contacto" icon="arrow-right" iconPosition="right">
+              {ctaText}
+            </Button>
+          </div>
+        )}
+      </div>
+      
+    </div>
+  </Container>
+</section>
+
+<script>
+  // Accordion functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const accordions = document.querySelectorAll('[data-accordion]');
+    
+    accordions.forEach((accordion) => {
+      const trigger = accordion.querySelector('[data-accordion-trigger]');
+      const content = accordion.querySelector('[data-accordion-content]');
+      const icon = accordion.querySelector('[data-accordion-icon]');
+      
+      trigger?.addEventListener('click', () => {
+        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+        
+        // Toggle actual
+        trigger.setAttribute('aria-expanded', String(!isExpanded));
+        
+        if (isExpanded) {
+          content?.classList.remove('max-h-96');
+          content?.classList.add('max-h-0');
+          icon?.classList.remove('rotate-180');
+        } else {
+          content?.classList.remove('max-h-0');
+          content?.classList.add('max-h-96');
+          icon?.classList.add('rotate-180');
+        }
+      });
+    });
+  });
+</script>

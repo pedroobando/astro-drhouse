@@ -81,6 +81,7 @@
     }
   ],
   "theme": "pediatra",
+  "photoProfile": "src/content/images/dr-dicampli.png",
   "contact": {
     "phone": "+58 281 555 0500",
     "whatsapp": "+58 414 345 6789",

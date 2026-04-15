@@ -1,6 +1,6 @@
 // src/content.config.ts - Astro 6 Content Collections Configuration
 import { defineCollection } from 'astro:content';
-import { file, glob } from 'astro/loaders';
+import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 // 1. Colección: Datos del médico (JSON)
@@ -50,6 +50,7 @@ const doctors = defineCollection({
       )
       .optional(),
     theme: z.enum(['pediatra', 'ginecologo', 'cirujano', 'general', 'urologo']),
+    photoProfile: z.string().optional(),
     contact: z.object({
       phone: z.string(),
       whatsapp: z.string(),

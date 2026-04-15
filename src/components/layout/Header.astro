@@ -1,0 +1,213 @@
+---
+// src/components/layout/Header.astro
+// Header de navegación principal
+
+import Container from '../ui/Container.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+
+interface NavItem {
+  label: string;
+  href: string;
+  children?: NavItem[];
+}
+
+interface Props {
+  logo?: string;
+  navItems?: NavItem[];
+  phone?: string;
+  whatsapp?: string;
+  transparent?: boolean;
+}
+
+const {
+  logo = "DrHouse",
+  navItems = [
+    { label: "Inicio", href: "#" },
+    { label: "Servicios", href: "#servicios" },
+    { label: "Sobre Mí", href: "#sobre-mi" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Contacto", href: "#contacto" },
+  ],
+  phone,
+  whatsapp,
+  transparent = false,
+} = Astro.props;
+
+const whatsappLink = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, '')}` : null;
+---
+
+<header 
+  class:list={[
+    "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+    transparent ? "bg-transparent" : "bg-surface/95 backdrop-blur-md shadow-sm"
+  ]}
+  data-header
+>
+  <Container>
+    <nav class="flex items-center justify-between h-16 lg:h-20">
+      {/* Logo */}
+      <a href="/" class="flex items-center gap-2 text-xl font-bold text-text hover:text-primary transition-colors">
+        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+          <Icon name="stethoscope" size={24} />
+        </div>
+        <span class="hidden sm:inline">{logo}</span>
+      </a>
+      
+      {/* Navegación Desktop */}
+      <div class="hidden lg:flex items-center gap-8">
+        {navItems.map((item) => (
+          <a 
+            href={item.href}
+            class="text-text-muted hover:text-primary font-medium transition-colors relative group"
+          >
+            {item.label}
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+          </a>
+        ))}
+      </div>
+      
+      {/* Acciones */}
+      <div class="flex items-center gap-3">
+        {/* Teléfono (visible en desktop) */}
+        {phone && (
+          <a 
+            href={`tel:${phone}`}
+            class="hidden md:flex items-center gap-2 text-text-muted hover:text-primary transition-colors"
+          >
+            <Icon name="phone" size={18} />
+            <span class="text-sm font-medium">{phone}</span>
+          </a>
+        )}
+        
+        {/* CTA Principal */}
+        <Button 
+          variant="primary" 
+          size="sm" 
+          href={whatsappLink || "#contacto"}
+          target={whatsappLink ? "_blank" : undefined}
+          rel={whatsappLink ? "noopener noreferrer" : undefined}
+          class="hidden sm:inline-flex"
+        >
+          Agendar
+        </Button>
+        
+        {/* Botón Menú Mobile */}
+        <button 
+          class="lg:hidden p-2 rounded-lg hover:bg-primary/10 transition-colors"
+          data-mobile-menu-toggle
+          aria-label="Abrir menú"
+        >
+          <Icon name="menu" size={24} class="text-text" />
+        </button>
+      </div>
+    </nav>
+  </Container>
+  
+  {/* Menú Mobile */}
+  <div 
+    class="lg:hidden fixed inset-0 top-16 bg-surface z-40 transform translate-x-full transition-transform duration-300"
+    data-mobile-menu
+  >
+    <Container class="py-6">
+      <div class="flex flex-col gap-4">
+        {navItems.map((item) => (
+          <a 
+            href={item.href}
+            class="text-lg font-medium text-text hover:text-primary py-2 border-b border-border transition-colors"
+            data-mobile-link
+          >
+            {item.label}
+          </a>
+        ))}
+        
+        {/* Contacto rápido en mobile */}
+        <div class="mt-6 p-4 bg-background rounded-xl border border-border">
+          <h3 class="font-semibold text-text mb-3">Contacto Rápido</h3>
+          {phone && (
+            <a href={`tel:${phone}`} class="flex items-center gap-3 py-2 text-text-muted hover:text-primary transition-colors">
+              <Icon name="phone" size={20} />
+              <span>{phone}</span>
+            </a>
+          )}
+          {whatsapp && (
+            <a 
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 py-2 text-text-muted hover:text-primary transition-colors"
+            >
+              <Icon name="whatsapp" size={20} />
+              <span>{whatsapp}</span>
+            </a>
+          )}
+        </div>
+        
+        <Button 
+          variant="primary" 
+          size="lg" 
+          href={whatsappLink || "#contacto"}
+          target={whatsappLink ? "_blank" : undefined}
+          rel={whatsappLink ? "noopener noreferrer" : undefined}
+          class="mt-4 w-full"
+        >
+          Agendar Cita
+        </Button>
+      </div>
+    </Container>
+  </div>
+  
+  {/* Overlay */}
+  <div 
+    class="lg:hidden fixed inset-0 bg-black/50 z-30 opacity-0 pointer-events-none transition-opacity duration-300"
+    data-mobile-overlay
+  ></div>
+</header>
+
+{/* Spacer para compensar header fixed */}
+<div class="h-16 lg:h-20"></div>
+
+<script>
+  // Mobile menu toggle
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.querySelector('[data-mobile-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+    const overlay = document.querySelector('[data-mobile-overlay]');
+    const links = document.querySelectorAll('[data-mobile-link]');
+    let isOpen = false;
+    
+    function toggleMenu() {
+      isOpen = !isOpen;
+      
+      if (isOpen) {
+        menu?.classList.remove('translate-x-full');
+        overlay?.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = 'hidden';
+      } else {
+        menu?.classList.add('translate-x-full');
+        overlay?.classList.add('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = '';
+      }
+    }
+    
+    toggle?.addEventListener('click', toggleMenu);
+    overlay?.addEventListener('click', toggleMenu);
+    links.forEach(link => link.addEventListener('click', toggleMenu));
+    
+    // Header scroll effect
+    const header = document.querySelector('[data-header]');
+    let lastScroll = 0;
+    
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        header?.classList.add('shadow-md');
+      } else {
+        header?.classList.remove('shadow-md');
+      }
+      
+      lastScroll = currentScroll;
+    });
+  });
+</script>

@@ -1,0 +1,42 @@
+---
+// src/components/sections/QuickLinkItem.astro
+// Item individual para la QuickLinksBar
+
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  icon: string;
+  title: string;
+  subtitle: string;
+  dropdownId?: string;
+}
+
+const { icon, title, subtitle, dropdownId } = Astro.props;
+const uniqueId = dropdownId || `dropdown-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="group relative">
+  <button 
+    class="w-full p-4 lg:p-6 flex flex-col items-center text-center gap-2 lg:gap-3 hover:bg-primary/5 transition-colors"
+    data-quicklink
+    data-dropdown={uniqueId}
+  >
+    <div class="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+      <Icon name={icon} size={20} class="lg:w-6 lg:h-6" />
+    </div>
+    <div>
+      <h3 class="font-semibold text-text text-sm lg:text-base">{title}</h3>
+      <p class="text-xs lg:text-sm text-text-muted mt-0.5 line-clamp-2">{subtitle}</p>
+    </div>
+    <Icon name="chevron-down" size={14} class="text-text-muted group-hover:text-primary transition-colors lg:hidden" />
+  </button>
+  
+  {/* Dropdown */}
+  <div 
+    id={uniqueId} 
+    class="hidden absolute top-full left-0 right-0 bg-surface shadow-xl border-t border-border z-50 p-4 lg:p-6 min-w-[300px] lg:left-auto lg:right-0 lg:w-80"
+    data-dropdown-content
+  >
+    <slot name="dropdown" />
+  </div>
+</div>

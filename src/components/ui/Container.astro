@@ -1,0 +1,30 @@
+---
+// src/components/ui/Container.astro
+// Wrapper consistente para contenido centrado y responsive
+
+interface Props {
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  class?: string;
+  as?: keyof HTMLElementTagNameMap;
+}
+
+const {
+  size = 'xl',
+  class: className = '',
+  as: Tag = 'div',
+} = Astro.props;
+
+const sizeClasses = {
+  sm: 'max-w-3xl',      // 768px
+  md: 'max-w-4xl',      // 896px
+  lg: 'max-w-6xl',      // 1152px
+  xl: 'max-w-7xl',      // 1280px
+  full: 'max-w-none',   // 100%
+};
+
+const baseClasses = `mx-auto w-full px-4 sm:px-6 lg:px-8 ${sizeClasses[size]} ${className}`;
+---
+
+<Tag class={baseClasses}>
+  <slot />
+</Tag>

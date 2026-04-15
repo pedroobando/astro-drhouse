@@ -1,6 +1,8 @@
 ---
 // src/layouts/MainLayout.astro - Layout Principal
 import '@/styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
 import { getEntry } from 'astro:content';
 
 interface Props {
@@ -15,7 +17,7 @@ const {
   theme = 'pediatra',
 } = Astro.props;
 
-// Obtener datos del doctor para el menú
+// Obtener datos del doctor
 const doctorEntry = await getEntry('doctors', 'dr-dicampli');
 const doctor = doctorEntry?.data;
 ---
@@ -30,95 +32,39 @@ const doctor = doctorEntry?.data;
     <meta name="theme-color" content="#0ea5e9" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content={`${title} | Dr. Di Campli`} />
+    <meta property="og:title" content={`${title} | DrHouse`} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
 
-    <title>{title} | Dr. Di Campli</title>
+    <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Preconnect para performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
   </head>
   <body class="bg-background text-text min-h-screen flex flex-col">
-    <!-- Header Simple (se expandirá en Fase 2) -->
-    <header class="bg-surface shadow-sm sticky top-0 z-50">
-      <nav class="container-custom py-4">
-        <div class="flex items-center justify-between">
-          <a href="/" class="text-2xl font-bold text-primary"> Dr. Di Campli </a>
-
-          <!-- Navegación Desktop -->
-          <div class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-text hover:text-primary font-medium">Inicio</a>
-            <a href="/sobre-mi" class="text-text hover:text-primary font-medium">Sobre Mí</a>
-            <a href="/servicios" class="text-text hover:text-primary font-medium">Servicios</a>
-            <a href="/citas" class="text-text hover:text-primary font-medium">Citas</a>
-            <a href="/contacto" class="btn-primary text-sm">Contacto</a>
-          </div>
-
-          <!-- Botón móvil (placeholder) -->
-          <button class="md:hidden p-2" aria-label="Menú">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-        </div>
-      </nav>
-    </header>
+    <!-- Header -->
+    <Header 
+      logo="DrHouse"
+      phone={doctor?.contact?.phone}
+      whatsapp={doctor?.contact?.whatsapp}
+    />
 
     <!-- Contenido Principal -->
     <main class="flex-grow">
       <slot />
     </main>
 
-    <!-- Footer Simple (se expandirá en Fase 2) -->
-    <footer class="bg-text text-white py-12 mt-auto">
-      <div class="container-custom">
-        <div class="grid md:grid-cols-3 gap-8">
-          <!-- Info del Doctor -->
-          <div>
-            <h3 class="text-xl font-bold mb-4">Dr. {doctor?.name || 'Di Campli'}</h3>
-            <p class="text-gray-300 mb-2">{doctor?.specialties?.join(' • ')}</p>
-            <p class="text-gray-400 text-sm">
-              {doctor?.experience}+ años de experiencia médica
-            </p>
-          </div>
-
-          <!-- Contacto Rápido -->
-          <div>
-            <h4 class="font-semibold mb-4">Contacto</h4>
-            {
-              doctor?.contact && (
-                <div class="space-y-2 text-gray-300 text-sm">
-                  <p>📞 {doctor.contact.phone}</p>
-                  <p>💬 {doctor.contact.whatsapp}</p>
-                  <p>✉️ {doctor.contact.email}</p>
-                </div>
-              )
-            }
-          </div>
-
-          <!-- Links Rápidos -->
-          <div>
-            <h4 class="font-semibold mb-4">Links</h4>
-            <div class="space-y-2 text-gray-300 text-sm">
-              <a href="/" class="block hover:text-white">Inicio</a>
-              <a href="/servicios" class="block hover:text-white">Servicios</a>
-              <a href="/citas" class="block hover:text-white">Agendar Cita</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} DrHouse Medical Websites. Todos los derechos reservados.</p>
-        </div>
-      </div>
-    </footer>
+    <!-- Footer -->
+    <Footer 
+      name={doctor?.name || 'Di Campli'}
+      title={doctor?.title || 'Dr.'}
+      specialties={doctor?.specialties || []}
+      phone={doctor?.contact?.phone}
+      whatsapp={doctor?.contact?.whatsapp}
+      email={doctor?.contact?.email}
+      address={doctor?.contact?.address}
+      clinics={doctor?.clinics || []}
+    />
   </body>
 </html>

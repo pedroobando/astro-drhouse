@@ -1,0 +1,234 @@
+---
+// src/components/layout/Footer.astro
+// Footer principal del sitio
+
+import Container from '../ui/Container.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Clinic {
+  name: string;
+  address: string;
+  phone?: string;
+}
+
+interface SocialLink {
+  platform: string;
+  url: string;
+  icon: string;
+}
+
+interface Props {
+  name: string;
+  title: string;
+  specialties: string[];
+  phone?: string;
+  whatsapp?: string;
+  email?: string;
+  address?: string;
+  clinics?: Clinic[];
+  social?: SocialLink[];
+  navItems?: { label: string; href: string }[];
+  copyrightYear?: number;
+}
+
+const {
+  name,
+  title,
+  specialties,
+  phone,
+  whatsapp,
+  email,
+  address,
+  clinics = [],
+  social = [],
+  navItems = [
+    { label: "Inicio", href: "#" },
+    { label: "Servicios", href: "#servicios" },
+    { label: "Sobre Mí", href: "#sobre-mi" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Contacto", href: "#contacto" },
+  ],
+  copyrightYear = new Date().getFullYear(),
+} = Astro.props;
+
+const whatsappLink = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, '')}` : null;
+---
+
+<footer class="bg-text text-white">
+  {/* Main Footer */}
+  <div class="py-16 lg:py-20">
+    <Container>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+        
+        {/* Columna 1: Info del Doctor */}
+        <div class="lg:col-span-1">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+              <Icon name="stethoscope" size={28} class="text-white" />
+            </div>
+            <div>
+              <div class="font-bold text-lg">DrHouse</div>
+              <div class="text-white/60 text-sm">Excelencia médica</div>
+            </div>
+          </div>
+          
+          <p class="text-white/70 text-sm leading-relaxed mb-6">
+            {title} {name}, especialista en {specialties.join(' y ')}. 
+            Comprometido con brindar atención médica de excelencia con {new Date().getFullYear() - (new Date().getFullYear() - 30)}+ años de experiencia.
+          </p>
+          
+          {/* Social Links */}
+          {social.length > 0 && (
+            <div class="flex gap-3">
+              {social.map((link) => (
+                <a 
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
+                  aria-label={link.platform}
+                >
+                  <Icon name={link.icon} size={20} />
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Columna 2: Navegación */}
+        <div>
+          <h3 class="font-bold text-lg mb-6">Navegación</h3>
+          <ul class="space-y-3">
+            {navItems.map((item) => (
+              <li>
+                <a 
+                  href={item.href}
+                  class="text-white/70 hover:text-primary transition-colors"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        {/* Columna 3: Contacto */}
+        <div>
+          <h3 class="font-bold text-lg mb-6">Contacto</h3>
+          <ul class="space-y-4">
+            {phone && (
+              <li>
+                <a 
+                  href={`tel:${phone}`}
+                  class="flex items-center gap-3 text-white/70 hover:text-primary transition-colors"
+                >
+                  <Icon name="phone" size={20} />
+                  <span>{phone}</span>
+                </a>
+              </li>
+            )}
+            {whatsapp && (
+              <li>
+                <a 
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-3 text-white/70 hover:text-green-400 transition-colors"
+                >
+                  <Icon name="whatsapp" size={20} />
+                  <span>{whatsapp}</span>
+                </a>
+              </li>
+            )}
+            {email && (
+              <li>
+                <a 
+                  href={`mailto:${email}`}
+                  class="flex items-center gap-3 text-white/70 hover:text-primary transition-colors"
+                >
+                  <Icon name="email" size={20} />
+                  <span>{email}</span>
+                </a>
+              </li>
+            )}
+            {address && (
+              <li class="flex items-start gap-3 text-white/70">
+                <Icon name="map-pin" size={20} class="flex-shrink-0 mt-0.5" />
+                <span>{address}</span>
+              </li>
+            )}
+          </ul>
+        </div>
+        
+        {/* Columna 4: Sedes */}
+        <div>
+          <h3 class="font-bold text-lg mb-6">Nuestras Sedes</h3>
+          {clinics.length > 0 ? (
+            <ul class="space-y-4">
+              {clinics.map((clinic) => (
+                <li class="p-4 bg-white/5 rounded-xl">
+                  <div class="font-medium text-white mb-1">{clinic.name}</div>
+                  <div class="text-sm text-white/60">{clinic.address}</div>
+                  {clinic.phone && (
+                    <a 
+                      href={`tel:${clinic.phone}`}
+                      class="text-sm text-primary hover:underline mt-2 inline-block"
+                    >
+                      {clinic.phone}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-white/60 text-sm">
+              Consulta nuestras ubicaciones disponibles en la sección de contacto.
+            </p>
+          )}
+        </div>
+        
+      </div>
+    </Container>
+  </div>
+  
+  {/* Bottom Bar */}
+  <div class="border-t border-white/10 py-6">
+    <Container>
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/50">
+        <p>© {copyrightYear} {title} {name}. Todos los derechos reservados.</p>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-white transition-colors">Política de Privacidad</a>
+          <a href="#" class="hover:text-white transition-colors">Términos de Servicio</a>
+        </div>
+      </div>
+    </Container>
+  </div>
+  
+  {/* Back to Top Button */}
+  <button 
+    class="fixed bottom-6 right-6 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center opacity-0 translate-y-4 transition-all duration-300 hover:bg-primary/90 z-40"
+    data-back-to-top
+    aria-label="Volver arriba"
+  >
+    <Icon name="chevron-up" size={24} />
+  </button>
+</footer>
+
+<script>
+  // Back to top functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const backToTop = document.querySelector('[data-back-to-top]');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 500) {
+        backToTop?.classList.remove('opacity-0', 'translate-y-4');
+      } else {
+        backToTop?.classList.add('opacity-0', 'translate-y-4');
+      }
+    });
+    
+    backToTop?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>

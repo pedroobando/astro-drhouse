@@ -1,0 +1,61 @@
+---
+// src/components/ui/Button.astro
+// Botón reutilizable con múltiples variantes
+import Icon from './Icon.astro';
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  class?: string;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+  target?: string;
+  rel?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  class: className = '',
+  icon,
+  iconPosition = 'right',
+  target,
+  rel,
+} = Astro.props;
+
+// Mapeo de variantes a clases
+const variantClasses = {
+  primary: 'btn-primary',
+  secondary: 'btn-secondary',
+  outline: 'btn-outline',
+  ghost: 'text-primary hover:bg-primary/10',
+  link: 'text-primary underline-offset-4 hover:underline p-0 h-auto',
+};
+
+// Mapeo de tamaños
+const sizeClasses = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-6 py-3 text-base',
+  lg: 'px-8 py-4 text-lg',
+};
+
+const baseClasses = `inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+
+const isLink = !!href;
+const Tag = isLink ? 'a' : 'button';
+---
+
+<Tag
+  class={baseClasses}
+  {...isLink ? { href, target, rel: target === '_blank' ? 'noopener noreferrer' : rel } : { type, disabled }}
+>
+  {icon && iconPosition === 'left' && <Icon name={icon} size={size === 'lg' ? 24 : 20} />}
+  <slot />
+  {icon && iconPosition === 'right' && <Icon name={icon} size={size === 'lg' ? 24 : 20} />}
+</Tag>
