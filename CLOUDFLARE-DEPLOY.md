@@ -6,7 +6,7 @@
 ✅ **SSL gratuito** - Certificados automáticos  
 ✅ **Previsualizaciones** - Cada PR tiene su URL de preview  
 ✅ **Sin configuración de Node.js** - Cloudflare maneja todo  
-✅ **Funciones Edge** - API routes funcionan en el edge  
+✅ **Funciones Edge** - API routes funcionan en el edge
 
 ---
 
@@ -26,7 +26,7 @@
 4. O crea uno manual con estos permisos:
    - Zone:Read
    - Page:Edit
-5. Copia el token (lo necesitarás en GitHub)
+5. Copia el token (lo necesitarás en GitHub) --> cfut_bB0wzZBh8bMfxSKgQMJG2WBl8uVujMfW10xNAdw714157112
 
 ---
 
@@ -45,10 +45,12 @@
 4. Agrega estos dos secrets:
 
 ### Secret 1: CLOUDFLARE_API_TOKEN
+
 - Name: `CLOUDFLARE_API_TOKEN`
 - Value: El token que copiaste en el Paso 2
 
 ### Secret 2: CLOUDFLARE_ACCOUNT_ID
+
 - Name: `CLOUDFLARE_ACCOUNT_ID`
 - Value: El Account ID del Paso 3
 
@@ -90,6 +92,7 @@ git push
 ## 🔄 Deploys Automáticos
 
 Cada vez que hagas push a `main`:
+
 1. GitHub Actions hace build automáticamente
 2. Deploya a Cloudflare Pages
 3. Actualiza la cache CDN global
@@ -121,6 +124,7 @@ git push
 **Causa:** El proyecto no existe en Cloudflare
 
 **Solución:**
+
 1. Crea el proyecto manualmente en https://dash.cloudflare.com/pages
 2. Nombre exacto: `astro-drhouse`
 
@@ -129,12 +133,14 @@ git push
 **Causa:** Token incorrecto o sin permisos
 
 **Solución:**
+
 1. Verifica que el token tenga permiso `Page:Edit`
 2. Revisa que el secret esté bien escrito en GitHub
 
 ### "Build failed"
 
 **Verificar:**
+
 1. Ve a **Actions** → workflow fallido
 2. Revisa el log de errores
 3. Asegúrate de que `npm install` funciona localmente
@@ -155,6 +161,7 @@ git push
 ## 📞 Soporte
 
 Si tienes problemas:
+
 1. Revisa logs en **Actions**
 2. Documentación de Astro: https://docs.astro.build/en/guides/integrations-guide/cloudflare/
 3. Documentación de Cloudflare: https://developers.cloudflare.com/pages/
@@ -164,6 +171,7 @@ Si tienes problemas:
 **¡Listo para deployar en Cloudflare! 🚀**
 
 Ventajas que tendrás:
+
 - ⚡ CDN global ultra-rápido
 - 🔒 SSL automático
 - 🌍 Edge functions para API routes
