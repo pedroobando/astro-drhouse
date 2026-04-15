@@ -31,6 +31,8 @@ git remote add origin https://github.com/TU-USUARIO/drhouse-medical.git
 git push -u origin main
 ```
 
+**Nota:** El proyecto está configurado para usar **npm** (no requiere Bun instalado).
+
 ---
 
 ## PASO 2: Configurar GitHub Pages
@@ -159,13 +161,13 @@ import myImage from '../content/images/profile/dr-dicampli.png';
 1. Ir a **Actions** en el repo
 2. Click en el workflow fallido
 3. Ver el log de errores
-4. Común: Falta `bun.lock` o dependencias
+4. Común: Falta `package-lock.json` o dependencias
 
 **Solución:**
 ```bash
-# Asegúrate de tener bun.lock en el repo
-git add bun.lock
-git commit -m "chore: Add bun.lock"
+# Asegúrate de tener package-lock.json en el repo
+git add package-lock.json
+git commit -m "chore: Add package-lock.json"
 git push
 ```
 
@@ -177,6 +179,18 @@ git push
 1. Espera 2-3 minutos después del push
 2. Refrescar con `Ctrl+Shift+R` (hard refresh)
 3. Verificar en **Actions** que el deploy terminó (punto verde ✅)
+
+---
+
+## 📝 Checklist Pre-Deploy
+
+Antes de hacer deploy, verifica:
+
+- [ ] `astro.config.mjs` tiene `site` y `base` correctos
+- [ ] `.github/workflows/deploy.yml` existe
+- [ ] Repositorio en GitHub creado
+- [ ] Código pusheado a la rama `main`
+- [ ] Build local funciona (`npm run build`)
 
 ---
 
