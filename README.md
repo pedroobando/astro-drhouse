@@ -36,20 +36,20 @@ Plataforma profesional de sitios web para médicos y centros de salud, desarroll
 
 ```bash
 # Instalar dependencias
-bun install
+npm install
 
 # Servidor de desarrollo
-bun dev
+npm run dev
 
 # Build para producción
-bun build
+npm run build
 
 # Preview de build
-bun preview
+npm run preview
 
 # Comandos de Astro CLI
-bun astro add [integración]
-bun astro check
+npx astro add [integración]
+npx astro check
 ```
 
 ---
