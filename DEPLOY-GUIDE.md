@@ -103,9 +103,10 @@ git push
 
 Cada vez que hagas push a la rama `main`:
 1. GitHub Actions detecta el cambio
-2. Ejecuta `bun install`
-3. Ejecuta `bun run build`
-4. Deploya automáticamente a GitHub Pages
+2. Configura Node.js 22 (requerido por Astro 6)
+3. Ejecuta `npm install`
+4. Ejecuta `npm run build`
+5. Deploya automáticamente a GitHub Pages
 
 ### Para actualizar el sitio:
 
@@ -155,7 +156,30 @@ import myImage from '../content/images/profile/dr-dicampli.png';
 <img src="/images/doctor.png" />
 ```
 
-### Problema 3: Build falla en GitHub Actions
+### Problema 3: "Node.js v20.x.x is not supported by Astro!"
+
+**Causa:** Astro 6 requiere Node.js >=22.12.0, pero GitHub Actions está usando una versión anterior
+
+**Solución:**
+El workflow ya está configurado con Node.js 22. Si sigues viendo este error:
+
+1. Verifica que el archivo `.github/workflows/deploy.yml` tenga:
+```yaml
+- name: Setup Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: 22  # ← Debe ser 22, no 20
+    cache: 'npm'
+```
+
+2. Si hiciste el cambio, haz commit y push:
+```bash
+git add .github/workflows/deploy.yml
+git commit -m "fix: Update to Node.js 22"
+git push
+```
+
+### Problema 4: Build falla en GitHub Actions
 
 **Verificar:**
 1. Ir a **Actions** en el repo
@@ -203,7 +227,7 @@ Antes de hacer deploy, verifica:
 - [ ] Repositorio en GitHub creado
 - [ ] Código pusheado a la rama `main`
 - [ ] GitHub Pages activado en Settings
-- [ ] Build local funciona (`bun run build`)
+- [ ] Build local funciona (`npm run build`)
 
 ---
 
@@ -237,8 +261,9 @@ Si quieres usar un dominio propio (ej: `drdicampli.com`):
 
 Si tienes problemas:
 1. Revisar logs en **Actions**
-2. Verificar que el build local funciona: `bun run build`
-3. Consultar documentación de Astro: https://docs.astro.build/en/guides/deploy/github/
+2. Verificar que el build local funciona: `npm run build`
+3. Asegurar que tienes Node.js 22+ instalado: `node --version`
+4. Consultar documentación de Astro: https://docs.astro.build/en/guides/deploy/github/
 
 ---
 
