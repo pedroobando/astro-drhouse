@@ -19,7 +19,8 @@ import { getEntry, getCollection } from 'astro:content';
 import officeImage from '../content/images/office-01.png';
 // import officeImage2 from '../content/images/office-02.png';
 // About: foto del perfil del doctor
-import doctorProfileImage from '../content/images/dr-dicampli.png';
+import doctorProfileImage from '@/content/images/dr-dicampli.png';
+import { Image } from 'astro:assets';
 
 // Fetch de Content Collections
 const testimonialEntries = await getCollection('testimonials');
@@ -131,6 +132,8 @@ Durante sus ${doctor?.experience} años de ejercicio profesional, ha atendido a 
     yearsExperience={doctor?.experience || 0}
     image={doctorProfileImage}
   />
+
+  <Image src={doctorProfileImage.src} width={300} height={300} alt={'imagen doctorgit'} />
 
   <!-- 5. Office Gallery - Instalaciones y consultas -->
   <!-- images={galleryImages} -->
