@@ -35,50 +35,48 @@ interface Props {
   ctaHref?: string;
 }
 
-const { 
-  name, 
-  title, 
-  biography, 
-  formation, 
+const {
+  name,
+  title,
+  biography,
+  formation,
   certifications = [],
   image,
   imageUrl,
   videoUrl,
   yearsExperience,
-  ctaText = "Agendar una Consulta",
-  ctaHref = "#contacto"
+  ctaText = 'Agendar una Consulta',
+  ctaHref = '#contacto',
 } = Astro.props;
 
 // Mostrar solo las 3 formaciones más recientes
-const recentFormation = formation
-  .sort((a, b) => b.year - a.year)
-  .slice(0, 3);
+const recentFormation = formation.sort((a, b) => b.year - a.year).slice(0, 3);
 ---
 
 <section id="sobre-mi" class="py-20 lg:py-28 bg-background">
   <Container>
     <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-      
       {/* Contenido */}
       <div class="order-2 lg:order-1">
         {/* Badge */}
-        <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6"
+        >
           <Icon name="stethoscope" size={16} />
           <span>Sobre Mí</span>
         </div>
-        
+
         {/* Título */}
         <h2 class="text-3xl lg:text-4xl font-bold text-text mb-6">
-          {title} <span class="text-primary">{name}</span>
+          {title}
+          <span class="text-primary">{name}</span>
         </h2>
-        
+
         {/* Biografía */}
         <div class="prose prose-lg text-text-muted mb-8">
-          {biography.split('\n\n').map((paragraph) => (
-            <p class="mb-4 leading-relaxed">{paragraph}</p>
-          ))}
+          {biography.split('\n\n').map((paragraph) => <p class="mb-4 leading-relaxed">{paragraph}</p>)}
         </div>
-        
+
         {/* Formación destacada */}
         <div class="mb-8">
           <h3 class="text-lg font-bold text-text mb-4 flex items-center gap-2">
@@ -86,75 +84,86 @@ const recentFormation = formation
             Formación Académica
           </h3>
           <div class="space-y-3">
-            {recentFormation.map((edu) => (
-              <div class="flex items-start gap-3 p-3 bg-surface rounded-lg border border-border">
-                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span class="text-primary font-bold text-sm">{edu.year}</span>
+            {
+              recentFormation.map((edu) => (
+                <div class="flex items-start gap-3 p-3 bg-surface rounded-lg border border-border">
+                  <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-primary font-bold text-sm">{edu.year}</span>
+                  </div>
+                  <div>
+                    <div class="font-medium text-text">{edu.degree}</div>
+                    <div class="text-sm text-text-muted">{edu.institution}</div>
+                    {edu.country && <div class="text-xs text-text-muted mt-1">{edu.country}</div>}
+                  </div>
                 </div>
-                <div>
-                  <div class="font-medium text-text">{edu.degree}</div>
-                  <div class="text-sm text-text-muted">{edu.institution}</div>
-                  {edu.country && <div class="text-xs text-text-muted mt-1">{edu.country}</div>}
-                </div>
-              </div>
-            ))}
+              ))
+            }
           </div>
         </div>
-        
+
         {/* CTA */}
         <Button variant="primary" size="lg" href={ctaHref} icon="arrow-right" iconPosition="right">
           {ctaText}
         </Button>
       </div>
-      
+
       {/* Imagen / Video */}
       <div class="order-1 lg:order-2">
         <div class="relative">
           {/* Fondo decorativo */}
-          <div class="absolute -inset-4 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-2"></div>
-          
+          <div
+            class="absolute -inset-4 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-2"
+          >
+          </div>
+
           {/* Contenido principal */}
           <div class="relative bg-surface rounded-2xl overflow-hidden shadow-xl">
-            {image ? (
-              <Image 
-                src={image} 
-                alt={`Foto profesional de ${title} ${name}`}
-                class="w-full h-auto object-cover aspect-[4/5]"
-                loading="lazy"
-                widths={[400, 800]}
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            ) : imageUrl ? (
-              <img 
-                src={imageUrl} 
-                alt={`${title} ${name}`}
-                class="w-full h-auto object-cover aspect-[4/5]"
-                loading="lazy"
-              />
-            ) : videoUrl ? (
-              <div class="aspect-video bg-text rounded-2xl overflow-hidden">
-                <iframe
-                  src={videoUrl}
-                  title={`Video presentación de ${title} ${name}`}
-                  class="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
+            {
+              image ? (
+                <Image
+                  src={image.src}
+                  alt={`Foto profesional de ${title} ${name}`}
+                  class="w-full h-auto object-cover aspect-[4/5]"
                   loading="lazy"
-                ></iframe>
-              </div>
-            ) : (
-              <div class="aspect-[4/5] bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                <div class="text-center p-8">
-                  <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Icon name="stethoscope" size={64} class="text-primary" />
-                  </div>
-                  <p class="text-text-muted">{title} {name}</p>
-                  <p class="text-sm text-text-muted mt-2">Foto profesional</p>
+                  widths={[400, 800]}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  width={image.width}
+                  height={image.height}
+                />
+              ) : imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={`${title} ${name}`}
+                  class="w-full h-auto object-cover aspect-[4/5]"
+                  loading="lazy"
+                />
+              ) : videoUrl ? (
+                <div class="aspect-video bg-text rounded-2xl overflow-hidden">
+                  <iframe
+                    src={videoUrl}
+                    title={`Video presentación de ${title} ${name}`}
+                    class="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"
+                  />
                 </div>
-              </div>
-            )}
+              ) : (
+                <div class="aspect-[4/5] bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                  <div class="text-center p-8">
+                    <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Icon name="stethoscope" size={64} class="text-primary" />
+                    </div>
+                    <p class="text-text-muted">
+                      {title} {name}
+                    </p>
+                    <p class="text-sm text-text-muted mt-2">Foto profesional</p>
+                  </div>
+                </div>
+              )
+            }
           </div>
-          
+
           {/* Badge flotante - Años de experiencia */}
           <div class="absolute -bottom-6 -left-6 bg-surface shadow-xl rounded-2xl p-5 border border-border">
             <div class="flex items-center gap-4">
@@ -167,19 +176,20 @@ const recentFormation = formation
               </div>
             </div>
           </div>
-          
+
           {/* Badge flotante - Certificaciones (si hay) */}
-          {certifications.length > 0 && (
-            <div class="absolute -top-4 -right-4 bg-primary text-white shadow-xl rounded-xl p-4">
-              <div class="flex items-center gap-2">
-                <Icon name="shield-check" size={20} />
-                <span class="font-medium">{certifications.length} Certificaciones</span>
+          {
+            certifications.length > 0 && (
+              <div class="absolute -top-4 -right-4 bg-primary text-white shadow-xl rounded-xl p-4">
+                <div class="flex items-center gap-2">
+                  <Icon name="shield-check" size={20} />
+                  <span class="font-medium">{certifications.length} Certificaciones</span>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          }
         </div>
       </div>
-      
     </div>
   </Container>
 </section>
