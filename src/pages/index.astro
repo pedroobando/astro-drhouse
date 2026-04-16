@@ -1,96 +1,36 @@
 ---
 // src/pages/index.astro - Página de Inicio completa
-import MainLayout from '../layouts/MainLayout.astro';
-import Hero from '../components/sections/Hero.astro';
-import QuickLinksBar from '../components/sections/QuickLinksBar.astro';
-import FeaturesBar from '../components/sections/FeaturesBar.astro';
-import AboutSection from '../components/sections/AboutSection.astro';
-import ServicesGrid from '../components/sections/ServicesGrid.astro';
-import OfficeGallery from '../components/sections/OfficeGallery.astro';
-import FAQSection from '../components/sections/FAQSection.astro';
-import Testimonials from '../components/sections/Testimonials.astro';
-import ContactForm from '../components/forms/ContactForm.astro';
+
+import MainLayout from '@/layouts/MainLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import QuickLinksBar from '@/components/sections/QuickLinksBar.astro';
+import FeaturesBar from '@/components/sections/FeaturesBar.astro';
+import AboutSection from '@/components/sections/AboutSection.astro';
+import ServicesGrid from '@/components/sections/ServicesGrid.astro';
+import OfficeGallery from '@/components/sections/OfficeGallery.astro';
+import FAQSection from '@/components/sections/FAQSection.astro';
+import Testimonials from '@/components/sections/Testimonials.astro';
+import ContactForm from '@/components/forms/ContactForm.astro';
 import Icon from '../components/ui/Icon.astro';
 import { getEntry, getCollection } from 'astro:content';
 
 // Importar imagenes usando astro:assets
 // Hero: foto del consultorio (oficina)
-import officeImage from '../content/images/offices/office-01.png';
-import officeImage2 from '../content/images/offices/office-02.png';
+import officeImage from '../content/images/office-01.png';
+// import officeImage2 from '../content/images/office-02.png';
 // About: foto del perfil del doctor
-import doctorProfileImage from '../content/images/profile/dr-dicampli.png';
-// Galería: procedimientos médicos
-import procedure01 from '../content/images/procedure/procedure-01.png';
-import procedure02 from '../content/images/procedure/procedure-02.png';
-import procedure03 from '../content/images/procedure/procedure-03.png';
-import procedure04 from '../content/images/procedure/procedure-04.png';
+import doctorProfileImage from '../content/images/dr-dicampli.png';
 
-// Imágenes para la galería
-const galleryImages = [
-  {
-    image: officeImage,
-    caption: "Sala de consulta equipada con tecnología moderna",
-    category: "instalaciones" as const,
-  },
-  {
-    image: officeImage2,
-    caption: "Área de espera cómoda y climatizada",
-    category: "instalaciones" as const,
-  },
-  {
-    image: doctorProfileImage,
-    caption: "Consulta pediátrica con consentimiento informado",
-    category: "consulta" as const,
-  },
-  {
-    image: procedure01,
-    caption: "Evaluación completa del paciente",
-    category: "procedimiento" as const,
-  },
-  {
-    image: procedure02,
-    caption: "Procedimiento realizado por especialista",
-    category: "procedimiento" as const,
-  },
-  {
-    image: procedure03,
-    caption: "Seguimiento post-procedimiento",
-    category: "procedimiento" as const,
-  },
-  {
-    image: procedure04,
-    caption: "Atención especializada pediátrica",
-    category: "consulta" as const,
-  },
-];
+// Fetch de Content Collections
+const testimonialEntries = await getCollection('testimonials');
+const faqEntries = await getCollection('faqs');
 
-// Testimonios de pacientes
-const testimonials = [
-  {
-    name: "María González",
-    initials: "MG",
-    rating: 5,
-    text: "Excelente atención con mi hijo. El Dr. Di Campli tiene una paciencia increíble y explica todo de manera clara. Lo recomiendo totalmente.",
-    service: "Pediatría General",
-    date: "Enero 2026",
-  },
-  {
-    name: "Carlos Rodríguez",
-    initials: "CR",
-    rating: 5,
-    text: "Después de años buscando diagnóstico para las alergias de mi hija, finalmente encontramos respuestas. El tratamiento ha sido muy efectivo.",
-    service: "Alergología Pediátrica",
-    date: "Diciembre 2025",
-  },
-  {
-    name: "Ana Martínez",
-    initials: "AM",
-    rating: 5,
-    text: "El consultorio es muy cómodo y el personal muy amable. Siempre que tengo una emergencia me atienden con prontitud.",
-    service: "Consulta de Emergencia",
-    date: "Noviembre 2025",
-  },
-];
+const testimonials = testimonialEntries.map((entry) => entry.data);
+
+const faqs = faqEntries
+  .filter((entry) => entry.data.active)
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((entry) => entry.data);
 
 // Obtener datos del doctor
 const doctorEntry = await getEntry('doctors', 'dr-dicampli');
@@ -102,34 +42,35 @@ const services = servicesEntries.sort((a, b) => a.data.order - b.data.order);
 
 // Preparar datos
 const workingHours = [
-  { days: "Lun - Vie", hours: "8:00 AM - 5:00 PM" },
-  { days: "Sábados", hours: "9:00 AM - 1:00 PM" },
-  { days: "Domingos", hours: "Cerrado" },
+  { days: 'Lun - Vie', hours: '8:00 AM - 5:00 PM' },
+  { days: 'Sábados', hours: '9:00 AM - 1:00 PM' },
+  { days: 'Domingos', hours: 'Cerrado' },
 ];
 
-const clinics = doctor?.clinics?.map(c => ({
-  name: c.name,
-  address: c.address,
-  phone: c.phone,
-})) || [];
+const clinics =
+  doctor?.clinics?.map((c) => ({
+    name: c.name,
+    address: c.address,
+    phone: c.phone,
+  })) || [];
 
 // Features
 const features = [
   {
-    icon: "shield-check",
+    icon: 'shield-check',
     title: `${doctor?.experience} Años de Experiencia`,
-    description: "Trayectoria sólida en Pediatría y Alergología Pediátrica, atendiendo a miles de pacientes."
+    description: 'Trayectoria sólida en Pediatría y Alergología Pediátrica, atendiendo a miles de pacientes.',
   },
   {
-    icon: "graduation-cap",
-    title: "Formación Internacional",
-    description: "Fellowship en Johns Hopkins Hospital y Universidad de Florencia. Excelencia académica."
+    icon: 'graduation-cap',
+    title: 'Formación Internacional',
+    description: 'Fellowship en Johns Hopkins Hospital y Universidad de Florencia. Excelencia académica.',
   },
   {
-    icon: "heart",
-    title: "Atención Personalizada",
-    description: "Cada paciente recibe atención individualizada, tratándolos como miembros de nuestra familia."
-  }
+    icon: 'heart',
+    title: 'Atención Personalizada',
+    description: 'Cada paciente recibe atención individualizada, tratándolos como miembros de nuestra familia.',
+  },
 ];
 
 // Servicios mapeados
@@ -140,55 +81,31 @@ const mappedServices = services.map((s, i) => ({
   slug: s.data.category,
   featured: i === 0,
 }));
-
-// FAQs
-const faqs = [
-  {
-    question: "¿Qué documentos debo llevar a la primera consulta?",
-    answer: "Para la primera consulta, es importante traer la cédula de identidad del niño, carnet de vacunación actualizado, exámenes médicos previos relevantes, y cualquier medicamento que esté tomando actualmente. Si tiene seguro médico, también traiga la tarjeta."
-  },
-  {
-    question: "¿Cuánto dura una consulta de alergología?",
-    answer: "La primera consulta de alergología dura aproximadamente 45-60 minutos, ya que incluye una evaluación completa del historial médico, examen físico detallado y discusión del plan de tratamiento. Las consultas de seguimiento suelen durar 20-30 minutos."
-  },
-  {
-    question: "¿Realizan pruebas de alergia en el consultorio?",
-    answer: "Sí, realizamos pruebas cutáneas de alergia (skin prick test) en el consultorio. Son pruebas rápidas, seguras y prácticamente indoloras que nos permiten identificar alergias a alimentos, polen, ácaros, moho y pelos de animales. Los resultados están disponibles en 15-20 minutos."
-  },
-  {
-    question: "¿Atienden emergencias pediátricas?",
-    answer: "Atendemos emergencias leves y moderadas durante nuestros horarios de consulta. Para emergencias graves que ponen en riesgo la vida, recomendamos acudir inmediatamente al servicio de emergencias del hospital más cercano."
-  },
-  {
-    question: "¿Cómo puedo agendar una cita?",
-    answer: "Puede agendar su cita de varias formas: llamando a nuestro número de teléfono, enviando un mensaje por WhatsApp, o completando el formulario de contacto en nuestra página web. Le responderemos en menos de 24 horas para confirmar su cita."
-  }
-];
 ---
 
-<MainLayout 
+<MainLayout
   title={`${doctor?.title} ${doctor?.name} - ${doctor?.specialties?.join(' & ')}`}
   description={`${doctor?.specialties?.join(' y ')}. Más de ${doctor?.experience} años de experiencia en Lechería, Anzoátegui.`}
 >
   <!-- 1. Hero Section - Foto del CONSULTORIO -->
-  <Hero 
+  <Hero
     name={doctor?.name || ''}
     title={doctor?.title || 'Dr.'}
     specialties={doctor?.specialties || []}
     experience={doctor?.experience || 0}
     tagline={`${doctor?.experience} años cuidando la salud de tus hijos`}
     description="Especialista en Pediatría y Alergología Pediátrica con formación internacional en Johns Hopkins y Universidad de Florencia."
-    ctaPrimary={{ text: "Agendar Cita", href: "#contacto" }}
-    ctaSecondary={{ text: "Ver Servicios", href: "#servicios" }}
+    ctaPrimary={{ text: 'Agendar Cita', href: '#contacto' }}
+    ctaSecondary={{ text: 'Ver Servicios', href: '#servicios' }}
     image={officeImage}
     imageAlt={`Consultorio moderno y equipado de ${doctor?.title} ${doctor?.name}`}
   />
 
   <!-- 2. QuickLinksBar -->
-  <QuickLinksBar 
+  <QuickLinksBar
     location={{
       address: doctor?.contact?.address || '',
-      mapUrl: "https://maps.google.com/?q=Centro+Médico+Lechería",
+      mapUrl: 'https://maps.google.com/?q=Centro+Médico+Lechería',
       clinics: clinics,
     }}
     workingHours={workingHours}
@@ -198,10 +115,7 @@ const faqs = [
   />
 
   <!-- 3. FeaturesBar -->
-  <FeaturesBar 
-    variant="colored"
-    features={features}
-  />
+  <FeaturesBar variant="colored" features={features} />
 
   <!-- 4. About Section - Foto del PERFIL del doctor -->
   <AboutSection
@@ -219,15 +133,15 @@ Durante sus ${doctor?.experience} años de ejercicio profesional, ha atendido a 
   />
 
   <!-- 5. Office Gallery - Instalaciones y consultas -->
+  <!-- images={galleryImages} -->
   <OfficeGallery
     title="Nuestras Instalaciones"
     subtitle="Espacios diseñados para el bienestar y comodidad de nuestros pacientes"
-    images={galleryImages}
     columns={3}
   />
 
   <!-- 5. Services Grid -->
-  <ServicesGrid 
+  <ServicesGrid
     title="Nuestros Servicios"
     subtitle="Atención médica integral especializada en Pediatría y Alergología Pediátrica"
     services={mappedServices}

@@ -1,5 +1,5 @@
 // src/content.config.ts - Astro 6 Content Collections Configuration
-import { defineCollection } from 'astro:content';
+import { defineCollection, image } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
@@ -120,10 +120,58 @@ const publications = defineCollection({
   }),
 });
 
+// 5. Colección: Galería (Markdown)
+const gallery = defineCollection({
+  loader: glob({
+    base: './src/content/gallery',
+    pattern: '**/*.md',
+  }),
+  schema: ({ image }) => z.object({
+    image: image(),
+    caption: z.string(),
+    category: z.enum(['instalaciones', 'consulta', 'procedimiento']),
+    order: z.number(),
+    active: z.boolean().default(true),
+  }),
+});
+
+// 6. Colección: Testimonios (Markdown)
+const testimonials = defineCollection({
+  loader: glob({
+    base: './src/content/testimonials',
+    pattern: '**/*.md',
+  }),
+  schema: z.object({
+    name: z.string(),
+    initials: z.string().max(2),
+    rating: z.number().min(1).max(5),
+    text: z.string(),
+    service: z.string(),
+    date: z.string(),
+  }),
+});
+
+// 7. Colección: FAQs (Markdown)
+const faqs = defineCollection({
+  loader: glob({
+    base: './src/content/faqs',
+    pattern: '**/*.md',
+  }),
+  schema: z.object({
+    question: z.string(),
+    answer: z.string(),
+    order: z.number(),
+    active: z.boolean().default(true),
+  }),
+});
+
 // Exportar todas las colecciones
 export const collections = {
   doctors,
   services,
   schedules,
   publications,
+  gallery,
+  testimonials,
+  faqs,
 };
