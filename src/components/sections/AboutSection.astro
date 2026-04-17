@@ -121,7 +121,7 @@ const recentFormation = formation.sort((a, b) => b.year - a.year).slice(0, 3);
             {
               image ? (
                 <Image
-                  src={image.src}
+                  src={image}
                   alt={`Foto profesional de ${title} ${name}`}
                   class="w-full h-auto object-cover aspect-[4/5]"
                   loading="lazy"
