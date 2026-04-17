@@ -11,7 +11,6 @@ import OfficeGallery from '@/components/sections/OfficeGallery.astro';
 import FAQSection from '@/components/sections/FAQSection.astro';
 import Testimonials from '@/components/sections/Testimonials.astro';
 import ContactForm from '@/components/forms/ContactForm.astro';
-import Icon from '../components/ui/Icon.astro';
 import { getEntry, getCollection } from 'astro:content';
 
 // Importar imagenes usando astro:assets
@@ -20,7 +19,6 @@ import officeImage from '../content/images/office-01.png';
 // import officeImage2 from '../content/images/office-02.png';
 // About: foto del perfil del doctor
 import doctorProfileImage from '@/content/images/dr-dicampli.png';
-import { Image } from 'astro:assets';
 
 // Fetch de Content Collections
 const testimonialEntries = await getCollection('testimonials');
@@ -40,20 +38,6 @@ const doctor = doctorEntry?.data;
 // Obtener servicios ordenados
 const servicesEntries = await getCollection('services');
 const services = servicesEntries.sort((a, b) => a.data.order - b.data.order);
-
-// Preparar datos
-const workingHours = [
-  { days: 'Lun - Vie', hours: '8:00 AM - 5:00 PM' },
-  { days: 'Sábados', hours: '9:00 AM - 1:00 PM' },
-  { days: 'Domingos', hours: 'Cerrado' },
-];
-
-const clinics =
-  doctor?.clinics?.map((c) => ({
-    name: c.name,
-    address: c.address,
-    phone: c.phone,
-  })) || [];
 
 // Features
 const features = [
@@ -88,32 +72,11 @@ const mappedServices = services.map((s, i) => ({
   title={`${doctor?.title} ${doctor?.name} - ${doctor?.specialties?.join(' & ')}`}
   description={`${doctor?.specialties?.join(' y ')}. Más de ${doctor?.experience} años de experiencia en Lechería, Anzoátegui.`}
 >
-  <!-- 1. Hero Section - Foto del CONSULTORIO -->
-  <Hero
-    name={doctor?.name || ''}
-    title={doctor?.title || 'Dr.'}
-    specialties={doctor?.specialties || []}
-    experience={doctor?.experience || 0}
-    tagline={`${doctor?.experience} años cuidando la salud de tus hijos`}
-    description="Especialista en Pediatría y Alergología Pediátrica con formación internacional en Johns Hopkins y Universidad de Florencia."
-    ctaPrimary={{ text: 'Agendar Cita', href: '#contacto' }}
-    ctaSecondary={{ text: 'Ver Servicios', href: '#servicios' }}
-    image={officeImage}
-    imageAlt={`Consultorio moderno y equipado de ${doctor?.title} ${doctor?.name}`}
-  />
+  <!-- 1. Hero Section - Componente inteligente que obtiene datos del doctor -->
+  <Hero image={officeImage} />
 
-  <!-- 2. QuickLinksBar -->
-  <QuickLinksBar
-    location={{
-      address: doctor?.contact?.address || '',
-      mapUrl: 'https://maps.google.com/?q=Centro+Médico+Lechería',
-      clinics: clinics,
-    }}
-    workingHours={workingHours}
-    phone={doctor?.contact?.phone || ''}
-    whatsapp={doctor?.contact?.whatsapp || ''}
-    email={doctor?.contact?.email}
-  />
+  <!-- 2. QuickLinksBar - Componente inteligente con múltiples sedes -->
+  <QuickLinksBar />
 
   <!-- 3. FeaturesBar -->
   <FeaturesBar variant="colored" features={features} />
@@ -135,20 +98,20 @@ Durante sus ${doctor?.experience} años de ejercicio profesional, ha atendido a 
 
   <!-- <Image src={doctorProfileImage.src} width={300} height={300} alt={'imagen doctorgit'} /> -->
 
-  <!-- 5. Office Gallery - Instalaciones y consultas -->
-  <!-- images={galleryImages} -->
-  <OfficeGallery
-    title="Nuestras Instalaciones"
-    subtitle="Espacios diseñados para el bienestar y comodidad de nuestros pacientes"
-    columns={3}
-  />
-
   <!-- 6. Services Grid -->
   <ServicesGrid
     title="Nuestros Servicios"
     subtitle="Atención médica integral especializada en Pediatría y Alergología Pediátrica"
     services={mappedServices}
     layout="grid"
+  />
+
+  <!-- 5. Office Gallery - Instalaciones y consultas -->
+  <!-- images={galleryImages} -->
+  <OfficeGallery
+    title="Nuestras Instalaciones"
+    subtitle="Espacios diseñados para el bienestar y comodidad de nuestros pacientes"
+    columns={3}
   />
 
   <!-- 7. FAQ Section -->

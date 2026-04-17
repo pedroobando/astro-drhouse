@@ -95,17 +95,21 @@
   "clinics": [
     {
       "name": "Centro Médico Lechería",
-      "address": "Av. Bolívar, Piso 3, Consultorio 305, Lechería",
-      "phone": "+58 281 555 0500"
+      "address": "Av. Bolívar, Piso 3, Consultorio 305, Lechería, Anzoátegui",
+      "phone": "+58 281 555 0500",
+      "schedule": "Lunes a Viernes: 08:00 - 14:00 (Miércoles hasta 12:00)"
     },
     {
-      "name": "Clínica El Ávila",
-      "address": "Av. Principal de Lechería, Lechería",
-      "phone": "+58 281 555 0600"
+      "name": "Clínica San Luis",
+      "address": "Av. Américo Vespucio, Lechería",
+      "phone": "+58 281 555 0600",
+      "schedule": "Lunes a Domingo: 07:00 - 09:00 (Visitas recién nacidos)"
     },
     {
-      "name": "Hospital de Clínicas Caroní",
-      "address": "Puerto La Cruz, Anzoátegui"
+      "name": "Clínica El Morro",
+      "address": "Av. Principal de El Morro, Lechería",
+      "phone": "+58 281 555 0700",
+      "schedule": "Lunes, Miércoles, Viernes: 07:30 - 09:00 (Visitas recién nacidos)"
     }
   ]
 }

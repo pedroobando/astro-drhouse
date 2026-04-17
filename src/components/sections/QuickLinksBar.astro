@@ -1,132 +1,121 @@
 ---
 // src/components/sections/QuickLinksBar.astro
-// Barra de acceso rápido inspirada en Medin pero mejorada
+// Barra de acceso rápido - Obtiene datos del doctor internamente
 
 import Container from '../ui/Container.astro';
 import Icon from '../ui/Icon.astro';
 import QuickLinkItem from './QuickLinkItem.astro';
+import { getEntry } from 'astro:content';
 
-interface WorkingHours {
-  days: string;
-  hours: string;
-}
-
-interface Clinic {
-  name: string;
-  address: string;
-  phone?: string;
+interface Props {
+  // Solo props opcionales para personalización
   mapUrl?: string;
 }
 
-interface Props {
-  location: {
-    address: string;
-    mapUrl?: string;
-    clinics?: Clinic[];
-  };
-  workingHours: WorkingHours[];
-  phone: string;
-  whatsapp: string;
-  email?: string;
-  emergencyPhone?: string;
-}
+const { mapUrl } = Astro.props;
 
-const {
-  location,
-  workingHours,
-  phone,
-  whatsapp,
-  email,
-  emergencyPhone,
-} = Astro.props;
+// Obtener datos del doctor directamente desde Content Collections
+const doctorEntry = await getEntry('doctors', 'dr-dicampli');
+const doctor = doctorEntry?.data;
+
+// Valores por defecto si no hay doctor en la BD
+const clinics = doctor?.clinics || [];
+const phone = doctor?.contact?.phone || '';
+const whatsapp = doctor?.contact?.whatsapp || '';
+const email = doctor?.contact?.email || '';
+
+// Dirección principal (primera clínica o address del contacto)
+const primaryAddress = clinics[0]?.address || doctor?.contact?.address || '';
 
 // Formatear teléfono para WhatsApp
 const whatsappNumber = whatsapp.replace(/\s+/g, '').replace('+', '');
 const whatsappLink = `https://wa.me/${whatsappNumber}`;
+
+// URL de mapa por defecto o la pasada como prop
+const googleMapUrl = mapUrl || 'https://maps.google.com/?q=Centro+Médico+Lechería';
 ---
 
 <section id="quick-links" class="relative z-20 -mt-8 mb-16">
   <Container>
     <div class="bg-surface rounded-2xl shadow-xl overflow-hidden">
       <div class="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-border">
-        
         {/* Ubicación */}
-        <QuickLinkItem 
-          icon="map-pin" 
-          title="Ubicación"
-          subtitle={location.address}
-          dropdownId="dropdown-location"
-        >
+        <QuickLinkItem icon="map-pin" title="Ubicación" subtitle={primaryAddress} dropdownId="dropdown-location">
           <div slot="dropdown" class="space-y-4">
             <h4 class="font-semibold text-text flex items-center gap-2">
               <Icon name="map-pin" size={18} class="text-primary" />
               Nuestras Sedes
             </h4>
-            {location.clinics ? (
-              <div class="space-y-3">
-                {location.clinics.map((clinic) => (
-                  <div class="p-3 bg-background rounded-lg">
-                    <div class="font-medium text-text">{clinic.name}</div>
-                    <div class="text-sm text-text-muted">{clinic.address}</div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div class="p-3 bg-background rounded-lg text-text">{location.address}</div>
-            )}
-            {location.mapUrl && (
-              <a 
-                href={location.mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                <Icon name="map-pin" size={18} />
-                Ver en Google Maps
-              </a>
-            )}
+            {
+              clinics.length > 0 ? (
+                <div class="space-y-3">
+                  {clinics.map((clinic) => (
+                    <div class="p-3 bg-background rounded-lg">
+                      <div class="font-medium text-text">{clinic.name}</div>
+                      <div class="text-sm text-text-muted">{clinic.address}</div>
+                      {clinic.phone && <div class="text-sm text-primary mt-1">{clinic.phone}</div>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div class="p-3 bg-background rounded-lg text-text">{primaryAddress}</div>
+              )
+            }
+            <a
+              href={googleMapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              <Icon name="map-pin" size={18} />
+              Ver en Google Maps
+            </a>
           </div>
         </QuickLinkItem>
-        
-        {/* Horarios */}
-        <QuickLinkItem 
-          icon="clock" 
+
+        {/* Horarios - Ahora muestra horarios por sede */}
+        <QuickLinkItem
+          icon="clock"
           title="Horarios"
-          subtitle={`${workingHours[0]?.days}: ${workingHours[0]?.hours}`}
+          subtitle={clinics[0]?.schedule || 'Consultar disponibilidad'}
           dropdownId="dropdown-hours"
         >
           <div slot="dropdown">
             <h4 class="font-semibold text-text flex items-center gap-2 mb-4">
               <Icon name="clock" size={18} class="text-primary" />
-              Horarios de Atención
+              Horarios por Sede
             </h4>
-            <table class="w-full">
-              <tbody class="divide-y divide-border">
-                {workingHours.map((schedule) => (
-                  <tr>
-                    <td class="py-3 text-text font-medium">{schedule.days}</td>
-                    <td class="py-3 text-text-muted text-right">{schedule.hours}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {
+              clinics.length > 0 ? (
+                <div class="space-y-4">
+                  {clinics.map((clinic) => (
+                    <div class="p-3 bg-background rounded-lg">
+                      <div class="font-medium text-text mb-2">{clinic.name}</div>
+                      <div class="text-sm text-text-muted flex items-start gap-2">
+                        <Icon name="clock" size={14} class="text-primary mt-0.5 flex-shrink-0" />
+                        <span>{clinic.schedule}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div class="p-3 bg-background rounded-lg text-text-muted">
+                  Horario no disponible. Por favor, contacte para más información.
+                </div>
+              )
+            }
           </div>
         </QuickLinkItem>
-        
+
         {/* Agendar */}
-        <QuickLinkItem 
-          icon="calendar" 
-          title="Agendar"
-          subtitle="Reserva tu cita"
-          dropdownId="dropdown-booking"
-        >
+        <QuickLinkItem icon="calendar" title="Agendar" subtitle="Reserva tu cita" dropdownId="dropdown-booking">
           <div slot="dropdown">
             <h4 class="font-semibold text-text flex items-center gap-2 mb-4">
               <Icon name="calendar" size={18} class="text-primary" />
               Agenda tu Cita
             </h4>
             <div class="space-y-3">
-              <a 
+              <a
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -135,7 +124,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}`;
                 <span>WhatsApp</span>
                 <span class="ml-auto">{whatsapp}</span>
               </a>
-              <a 
+              <a
                 href={`tel:${phone}`}
                 class="flex items-center gap-3 w-full p-4 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
               >
@@ -143,60 +132,75 @@ const whatsappLink = `https://wa.me/${whatsappNumber}`;
                 <span class="ml-auto">{phone}</span>
               </a>
             </div>
+            <p class="mt-4 text-sm text-text-muted">Citas disponibles con 24-48h de anticipación</p>
           </div>
         </QuickLinkItem>
-        
+
         {/* Contacto */}
-        <QuickLinkItem 
-          icon="phone" 
-          title="Contacto"
-          subtitle={emergencyPhone ? `Emergencia: ${emergencyPhone}` : phone}
-          dropdownId="dropdown-contact"
-        >
+        <QuickLinkItem icon="phone" title="Contacto" subtitle={phone} dropdownId="dropdown-contact">
           <div slot="dropdown">
             <h4 class="font-semibold text-text flex items-center gap-2 mb-4">
               <Icon name="phone" size={18} class="text-primary" />
               Información de Contacto
             </h4>
             <div class="space-y-3">
-              <a href={`tel:${phone}`} class="flex items-center gap-3 p-3 bg-background rounded-lg hover:bg-primary/5 transition-colors">
+              <a
+                href={`tel:${phone}`}
+                class="flex items-center gap-3 p-3 bg-background rounded-lg hover:bg-primary/5 transition-colors"
+              >
                 <Icon name="phone" size={20} class="text-primary" />
                 <div>
-                  <div class="text-sm text-text-muted">Teléfono</div>
+                  <div class="text-sm text-text-muted">Teléfono Principal</div>
                   <div class="font-medium text-text">{phone}</div>
                 </div>
               </a>
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 bg-background rounded-lg hover:bg-primary/5 transition-colors">
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 p-3 bg-background rounded-lg hover:bg-primary/5 transition-colors"
+              >
                 <Icon name="whatsapp" size={20} class="text-green-500" />
                 <div>
                   <div class="text-sm text-text-muted">WhatsApp</div>
                   <div class="font-medium text-text">{whatsapp}</div>
                 </div>
               </a>
-              {email && (
-                <a href={`mailto:${email}`} class="flex items-center gap-3 p-3 bg-background rounded-lg hover:bg-primary/5 transition-colors">
-                  <Icon name="email" size={20} class="text-primary" />
-                  <div>
-                    <div class="text-sm text-text-muted">Email</div>
-                    <div class="font-medium text-text">{email}</div>
-                  </div>
-                </a>
-              )}
-              {emergencyPhone && (
-                <div class="p-3 bg-red-50 rounded-lg border border-red-100">
-                  <div class="flex items-center gap-2 text-red-600 font-medium mb-1">
-                    <Icon name="exclamation-triangle" size={18} />
-                    <span>Línea de Emergencia</span>
-                  </div>
-                  <a href={`tel:${emergencyPhone}`} class="text-lg font-bold text-red-600 hover:underline">
-                    {emergencyPhone}
+              {
+                email && (
+                  <a
+                    href={`mailto:${email}`}
+                    class="flex items-center gap-3 p-3 bg-background rounded-lg hover:bg-primary/5 transition-colors"
+                  >
+                    <Icon name="email" size={20} class="text-primary" />
+                    <div>
+                      <div class="text-sm text-text-muted">Email</div>
+                      <div class="font-medium text-text">{email}</div>
+                    </div>
                   </a>
-                </div>
-              )}
+                )
+              }
             </div>
+            {
+              clinics.length > 1 && (
+                <div class="mt-4 pt-4 border-t border-border">
+                  <p class="text-sm text-text-muted mb-2">Teléfonos por sede:</p>
+                  <div class="space-y-2">
+                    {clinics.map(
+                      (clinic) =>
+                        clinic.phone && (
+                          <div class="flex items-center justify-between text-sm">
+                            <span class="text-text-muted">{clinic.name}:</span>
+                            <span class="font-medium text-text">{clinic.phone}</span>
+                          </div>
+                        )
+                    )}
+                  </div>
+                </div>
+              )
+            }
           </div>
         </QuickLinkItem>
-        
       </div>
     </div>
   </Container>
@@ -206,26 +210,26 @@ const whatsappLink = `https://wa.me/${whatsappNumber}`;
   // Script para manejar los dropdowns
   document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll('[data-quicklink]');
-    
-    buttons.forEach(button => {
+
+    buttons.forEach((button) => {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
         const dropdownId = button.getAttribute('data-dropdown');
         const dropdown = document.getElementById(dropdownId);
-        
+
         // Cerrar otros dropdowns
-        document.querySelectorAll('[data-dropdown-content]').forEach(d => {
+        document.querySelectorAll('[data-dropdown-content]').forEach((d) => {
           if (d.id !== dropdownId) d.classList.add('hidden');
         });
-        
+
         // Toggle este dropdown
         dropdown?.classList.toggle('hidden');
       });
     });
-    
+
     // Cerrar al hacer click fuera
     document.addEventListener('click', () => {
-      document.querySelectorAll('[data-dropdown-content]').forEach(d => {
+      document.querySelectorAll('[data-dropdown-content]').forEach((d) => {
         d.classList.add('hidden');
       });
     });
