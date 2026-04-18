@@ -1,16 +1,14 @@
 ---
 // src/components/sections/Testimonials.astro
-// Sección de testimonios de pacientes
+// Sección de testimonios de pacientes - Self-contained
 
 import Container from '../ui/Container.astro';
 import Icon from '../ui/Icon.astro';
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import { getCollection } from 'astro:content';
 
 interface Testimonial {
   name: string;
   role?: string;
-  image?: ImageMetadata;
   initials: string;
   rating: number;
   text: string;
@@ -21,14 +19,16 @@ interface Testimonial {
 interface Props {
   title?: string;
   subtitle?: string;
-  testimonials: Testimonial[];
 }
 
 const {
   title = "Lo que dicen nuestros pacientes",
   subtitle = "Testimonios de familias que confían en nosotros",
-  testimonials = [],
 } = Astro.props;
+
+// Obtener testimonios desde Content Collections
+const testimonialEntries = await getCollection('testimonials');
+const testimonials = testimonialEntries.map((entry) => entry.data as Testimonial);
 
 // Generar estrellas según rating
 function getStars(rating: number) {
@@ -74,19 +74,9 @@ function getStars(rating: number) {
 
           {/* Autor */}
           <div class="flex items-center gap-3">
-            {testimonial.image ? (
-              <Image 
-                src={testimonial.image}
-                alt={testimonial.name}
-                class="w-12 h-12 rounded-full object-cover"
-                width={48}
-                height={48}
-              />
-            ) : (
-              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                {testimonial.initials}
-              </div>
-            )}
+            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+              {testimonial.initials}
+            </div>
             <div>
               <div class="font-bold text-text">{testimonial.name}</div>
               {testimonial.role && (

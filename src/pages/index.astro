@@ -11,7 +11,7 @@ import OfficeGallery from '@/components/sections/OfficeGallery.astro';
 import FAQSection from '@/components/sections/FAQSection.astro';
 import Testimonials from '@/components/sections/Testimonials.astro';
 import ContactForm from '@/components/forms/ContactForm.astro';
-import { getEntry, getCollection } from 'astro:content';
+import { getEntry } from 'astro:content';
 
 // Importar imagenes usando astro:assets
 // Hero: foto del consultorio (oficina)
@@ -20,52 +20,9 @@ import officeImage from '../content/images/office-01.png';
 // About: foto del perfil del doctor
 import doctorProfileImage from '@/content/images/dr-dicampli.png';
 
-// Fetch de Content Collections
-const testimonialEntries = await getCollection('testimonials');
-const faqEntries = await getCollection('faqs');
-
-const testimonials = testimonialEntries.map((entry) => entry.data);
-
-const faqs = faqEntries
-  .filter((entry) => entry.data.active)
-  .sort((a, b) => a.data.order - b.data.order)
-  .map((entry) => entry.data);
-
-// Obtener datos del doctor
+// Obtener datos del doctor para el título y descripción de la página
 const doctorEntry = await getEntry('doctors', 'dr-dicampli');
 const doctor = doctorEntry?.data;
-
-// Obtener servicios ordenados
-const servicesEntries = await getCollection('services');
-const services = servicesEntries.sort((a, b) => a.data.order - b.data.order);
-
-// Features
-const features = [
-  {
-    icon: 'shield-check',
-    title: `${doctor?.experience} Años de Experiencia`,
-    description: 'Trayectoria sólida en Pediatría y Alergología Pediátrica, atendiendo a miles de pacientes.',
-  },
-  {
-    icon: 'graduation-cap',
-    title: 'Formación Internacional',
-    description: 'Fellowship en Johns Hopkins Hospital y Universidad de Florencia. Excelencia académica.',
-  },
-  {
-    icon: 'heart',
-    title: 'Atención Personalizada',
-    description: 'Cada paciente recibe atención individualizada, tratándolos como miembros de nuestra familia.',
-  },
-];
-
-// Servicios mapeados
-const mappedServices = services.map((s, i) => ({
-  title: s.data.title,
-  description: s.body?.slice(0, 120).replace(/[#*]/g, '') + '...',
-  icon: s.data.category === 'pediatria' ? 'stethoscope' : 'heart-pulse',
-  slug: s.data.category,
-  featured: i === 0,
-}));
 ---
 
 <MainLayout
@@ -79,60 +36,25 @@ const mappedServices = services.map((s, i) => ({
   <QuickLinksBar />
 
   <!-- 3. FeaturesBar -->
-  <FeaturesBar variant="colored" features={features} />
+  <FeaturesBar variant="colored" />
 
   <!-- 4. About Section - Foto del PERFIL del doctor -->
-  <AboutSection
-    name={doctor?.name || ''}
-    title={doctor?.title || 'Dr.'}
-    biography={`${doctor?.title} ${doctor?.name} es un médico pediatra y alergólogo pediátrico con amplia experiencia en el diagnóstico y tratamiento de enfermedades alérgicas en niños y adolescentes.
-
-Su formación académica incluye estudios de postgrado en prestigiosas instituciones internacionales como Johns Hopkins Hospital en Estados Unidos y la Universidad de Florencia en Italia.
-
-Durante sus ${doctor?.experience} años de ejercicio profesional, ha atendido a miles de pacientes, desarrollando un enfoque integral y personalizado para cada caso. Su compromiso es brindar atención médica de excelencia, combinando los avances más recientes de la medicina con un trato humano y cercano.`}
-    formation={doctor?.formation || []}
-    certifications={doctor?.certifications || []}
-    yearsExperience={doctor?.experience || 0}
-    image={doctorProfileImage}
-  />
+  <AboutSection />
 
   <!-- <Image src={doctorProfileImage.src} width={300} height={300} alt={'imagen doctorgit'} /> -->
 
-  <!-- 6. Services Grid -->
-  <ServicesGrid
-    title="Nuestros Servicios"
-    subtitle="Atención médica integral especializada en Pediatría y Alergología Pediátrica"
-    services={mappedServices}
-    layout="grid"
-  />
+  <!-- 6. Services Grid - Self-contained, obtiene datos internamente -->
+  <ServicesGrid />
 
-  <!-- 5. Office Gallery - Instalaciones y consultas -->
-  <!-- images={galleryImages} -->
-  <OfficeGallery
-    title="Nuestras Instalaciones"
-    subtitle="Espacios diseñados para el bienestar y comodidad de nuestros pacientes"
-    columns={3}
-  />
+  <!-- 5. Office Gallery - Self-contained, obtiene datos internamente -->
+  <OfficeGallery />
 
-  <!-- 7. FAQ Section -->
-  <FAQSection
-    title="Preguntas Frecuentes"
-    subtitle="Resolvemos tus dudas sobre nuestras consultas y servicios"
-    faqs={faqs}
-    layout="single"
-  />
+  <!-- 7. FAQ Section - Self-contained, obtiene datos internamente -->
+  <FAQSection />
 
-  <!-- 8. Testimonials Section -->
-  <Testimonials
-    title="Lo que dicen nuestros pacientes"
-    subtitle="Testimonios de familias que confían en nosotros"
-    testimonials={testimonials}
-  />
+  <!-- 8. Testimonials Section - Self-contained, obtiene datos internamente -->
+  <Testimonials />
 
-  <!-- 9. Contact Form Section -->
-  <ContactForm
-    doctorName={`${doctor?.title} ${doctor?.name}`}
-    doctorEmail={doctor?.contact?.email || ''}
-    doctorWhatsapp={doctor?.contact?.whatsapp || ''}
-  />
+  <!-- 9. Contact Form Section - Self-contained, obtiene datos internamente -->
+  <ContactForm />
 </MainLayout>

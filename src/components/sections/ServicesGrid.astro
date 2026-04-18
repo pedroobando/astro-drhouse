@@ -1,10 +1,11 @@
 ---
 // src/components/sections/ServicesGrid.astro
-// Grid de servicios médicos
+// Grid de servicios médicos - Self-contained component
 
 import Container from '../ui/Container.astro';
 import Icon from '../ui/Icon.astro';
 import Button from '../ui/Button.astro';
+import { getCollection } from 'astro:content';
 
 interface Service {
   title: string;
@@ -17,22 +18,27 @@ interface Service {
 interface Props {
   title?: string;
   subtitle?: string;
-  services: Service[];
   layout?: 'grid' | 'asymmetric' | 'cards';
   showCta?: boolean;
-  ctaText?: string;
-  ctaHref?: string;
 }
 
 const { 
   title = "Nuestros Servicios", 
   subtitle,
-  services = [],
   layout = 'grid',
   showCta = true,
-  ctaText = "Ver todos los servicios",
-  ctaHref = "#contacto"
 } = Astro.props;
+
+// Obtener servicios internamente
+const servicesEntries = await getCollection('services');
+const services = servicesEntries.sort((a, b) => a.data.order - b.data.order);
+const mappedServices: Service[] = services.map((s, i) => ({
+  title: s.data.title,
+  description: s.body?.slice(0, 120).replace(/[#*]/g, '') + '...',
+  icon: s.data.category === 'pediatria' ? 'stethoscope' : 'heart-pulse',
+  slug: s.data.category,
+  featured: i === 0,
+}));
 
 // Layout classes
 const layoutClasses = {
@@ -56,7 +62,7 @@ const layoutClasses = {
     
     {/* Grid de servicios */}
     <div class={layoutClasses[layout]}>
-      {services.map((service, index) => (
+      {mappedServices.map((service, index) => (
         <article 
           class:list={[
             "group relative bg-background rounded-2xl border border-border overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
@@ -105,8 +111,8 @@ const layoutClasses = {
     {/* CTA */}
     {showCta && (
       <div class="text-center mt-12">
-        <Button variant="outline" size="lg" href={ctaHref} icon="arrow-right" iconPosition="right">
-          {ctaText}
+        <Button variant="outline" size="lg" href="#contacto" icon="arrow-right" iconPosition="right">
+          Ver todos los servicios
         </Button>
       </div>
     )}

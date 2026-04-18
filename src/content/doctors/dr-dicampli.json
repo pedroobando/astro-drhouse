@@ -81,6 +81,23 @@
     }
   ],
   "theme": "pediatra",
+  "features": [
+    {
+      "icon": "shield-check",
+      "title": "38 Años de Experiencia",
+      "description": "Trayectoria sólida en Pediatría y Alergología Pediátrica, atendiendo a miles de pacientes."
+    },
+    {
+      "icon": "graduation-cap",
+      "title": "Formación Internacional",
+      "description": "Fellowship en Johns Hopkins Hospital y Universidad de Florencia. Excelencia académica."
+    },
+    {
+      "icon": "heart",
+      "title": "Atención Personalizada",
+      "description": "Cada paciente recibe atención individualizada, tratándolos como miembros de nuestra familia."
+    }
+  ],
   "photoProfile": "src/content/images/dr-dicampli.png",
   "contact": {
     "phone": "+58 281 555 0500",

@@ -1,18 +1,25 @@
 ---
 // src/components/forms/ContactForm.astro
-// Formulario de contacto funcional con validación
+// Formulario de contacto funcional con validación - Self-contained
 
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
+import { getEntry } from 'astro:content';
 
 interface Props {
-  doctorName: string;
-  doctorEmail: string;
-  doctorWhatsapp: string;
   submitEndpoint?: string;
 }
 
-const { doctorName, doctorEmail, doctorWhatsapp, submitEndpoint = '/api/contact' } = Astro.props;
+const { submitEndpoint = '/api/contact' } = Astro.props;
+
+// Obtener datos del doctor desde Content Collections
+const doctorEntry = await getEntry('doctors', 'dr-dicampli');
+const doctor = doctorEntry?.data;
+
+// Extraer datos del doctor
+const doctorName = doctor ? `${doctor.title} ${doctor.name}` : '';
+const doctorEmail = doctor?.contact?.email || '';
+const doctorWhatsapp = doctor?.contact?.whatsapp || '';
 
 const whatsappNumber = doctorWhatsapp.replace(/\D/g, '');
 const whatsappLink = `https://wa.me/${whatsappNumber}`;

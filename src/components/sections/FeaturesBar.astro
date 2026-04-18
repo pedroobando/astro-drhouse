@@ -1,9 +1,10 @@
 ---
 // src/components/sections/FeaturesBar.astro
-// Barra de características/value propositions
+// Barra de características/value propositions - Obtiene datos del doctor internamente
 
 import Container from '../ui/Container.astro';
 import Icon from '../ui/Icon.astro';
+import { getEntry } from 'astro:content';
 
 interface Feature {
   icon: string;
@@ -12,18 +13,41 @@ interface Feature {
 }
 
 interface Props {
-  features?: Feature[];
+  // Features fijas por defecto (para overrides si necesario)
+  // features?: Feature[];
   variant?: 'light' | 'dark' | 'colored' | 'gradient';
   title?: string;
   subtitle?: string;
 }
 
-const { 
-  features = [], 
-  variant = 'light',
-  title,
-  subtitle 
-} = Astro.props;
+// Obtener datos del doctor directamente desde Content Collections
+const doctorEntry = await getEntry('doctors', 'dr-dicampli');
+const doctor = doctorEntry?.data;
+
+// Features por defecto o del doctor
+const defaultFeatures: Feature[] = [
+  {
+    icon: 'shield-check',
+    title: `${doctor?.experience} Años de Experiencia`,
+    description: 'Trayectoria sólida en Pediatría y Alergología Pediátrica, atendiendo a miles de pacientes.',
+  },
+  {
+    icon: 'graduation-cap',
+    title: 'Formación Internacional',
+    description: 'Fellowship en Johns Hopkins Hospital y Universidad de Florencia. Excelencia académica.',
+  },
+  {
+    icon: 'heart',
+    title: 'Atención Personalizada',
+    description: 'Cada paciente recibe atención individualizada, tratándolos como miembros de nuestra familia.',
+  },
+];
+
+// Usar features del doctor si existen, sino defaults
+const features: Feature[] = doctor?.features?.length ? doctor.features : defaultFeatures;
+
+// Usar features pasadas como prop o las default
+const { variant = 'colored', title, subtitle } = Astro.props;
 
 // Variantes de estilo
 const variantClasses = {
@@ -57,23 +81,31 @@ const subtitleClasses = {
 
 <section class={`${variantClasses[variant]} py-12 lg:py-16`}>
   <Container>
-    {(title || subtitle) && (
-      <div class="text-center mb-10 lg:mb-12">
-        {title && <h2 class={`text-2xl lg:text-3xl font-bold ${textClasses[variant]} mb-3`}>{title}</h2>}
-        {subtitle && <p class={`text-lg ${subtitleClasses[variant]} max-w-2xl mx-auto`}>{subtitle}</p>}
-      </div>
-    )}
-    
-    <div class={`grid gap-6 lg:gap-8 ${features.length === 3 ? 'md:grid-cols-3' : features.length === 4 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
-      {features.map((feature) => (
-        <div class="group text-center p-6 rounded-xl transition-all duration-300 hover:scale-105">
-          <div class={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-colors duration-300 ${iconBgClasses[variant]}`}>
-            <Icon name={feature.icon} size={32} />
-          </div>
-          <h3 class={`text-lg font-bold ${textClasses[variant]} mb-2`}>{feature.title}</h3>
-          <p class={`text-sm ${subtitleClasses[variant]} leading-relaxed`}>{feature.description}</p>
+    {
+      (title || subtitle) && (
+        <div class="text-center mb-10 lg:mb-12">
+          {title && <h2 class={`text-2xl lg:text-3xl font-bold ${textClasses[variant]} mb-3`}>{title}</h2>}
+          {subtitle && <p class={`text-lg ${subtitleClasses[variant]} max-w-2xl mx-auto`}>{subtitle}</p>}
         </div>
-      ))}
+      )
+    }
+
+    <div
+      class={`grid gap-6 lg:gap-8 ${features.length === 3 ? 'md:grid-cols-3' : features.length === 4 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'}`}
+    >
+      {
+        features.map((feature) => (
+          <div class="group text-center p-6 rounded-xl transition-all duration-300 hover:scale-105">
+            <div
+              class={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-colors duration-300 ${iconBgClasses[variant]}`}
+            >
+              <Icon name={feature.icon} size={32} />
+            </div>
+            <h3 class={`text-lg font-bold ${textClasses[variant]} mb-2`}>{feature.title}</h3>
+            <p class={`text-sm ${subtitleClasses[variant]} leading-relaxed`}>{feature.description}</p>
+          </div>
+        ))
+      }
     </div>
   </Container>
 </section>

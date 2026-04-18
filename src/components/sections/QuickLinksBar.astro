@@ -33,11 +33,13 @@ const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
 // URL de mapa por defecto o la pasada como prop
 const googleMapUrl = mapUrl || 'https://maps.google.com/?q=Centro+Médico+Lechería';
+
+// console.log(clinics);
 ---
 
-<section id="quick-links" class="relative z-20 -mt-8 mb-16">
+<section id="quick-links" class="relative -mt-8 mb-16 z-50">
   <Container>
-    <div class="bg-surface rounded-2xl shadow-xl overflow-hidden">
+    <div class="bg-surface rounded-2xl shadow-xl">
       <div class="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-border">
         {/* Ubicación */}
         <QuickLinkItem icon="map-pin" title="Ubicación" subtitle={primaryAddress} dropdownId="dropdown-location">
@@ -206,32 +208,39 @@ const googleMapUrl = mapUrl || 'https://maps.google.com/?q=Centro+Médico+Lecher
   </Container>
 </section>
 
+<style>
+  /* Dropdown inicialmente oculto */
+  #quick-links [data-dropdown-content] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+  }
+
+  /* Mostrar dropdown en hover del group */
+  #quick-links .group:hover [data-dropdown-content] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  /* Forzar overflow visible en las celdas del grid */
+  #quick-links .grid > div {
+    overflow: visible;
+  }
+
+  /* Evitar que el hover en el dropdown cierre el menú */
+  #quick-links [data-dropdown-content]:hover {
+    pointer-events: auto;
+  }
+</style>
+
 <script>
-  // Script para manejar los dropdowns
+  // Script minimalista - ya no necesitamos click handlers porque usamos CSS hover
   document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('[data-quicklink]');
-
-    buttons.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const dropdownId = button.getAttribute('data-dropdown');
-        const dropdown = document.getElementById(dropdownId);
-
-        // Cerrar otros dropdowns
-        document.querySelectorAll('[data-dropdown-content]').forEach((d) => {
-          if (d.id !== dropdownId) d.classList.add('hidden');
-        });
-
-        // Toggle este dropdown
-        dropdown?.classList.toggle('hidden');
-      });
-    });
-
-    // Cerrar al hacer click fuera
-    document.addEventListener('click', () => {
-      document.querySelectorAll('[data-dropdown-content]').forEach((d) => {
-        d.classList.add('hidden');
-      });
+    // Solo asegurar que los dropdowns estén cerrados al cargar
+    document.querySelectorAll('[data-dropdown-content]').forEach((d) => {
+      d.classList.remove('active');
     });
   });
 </script>

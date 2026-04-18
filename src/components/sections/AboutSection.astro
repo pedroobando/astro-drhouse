@@ -1,53 +1,32 @@
 ---
 // src/components/sections/AboutSection.astro
-// Sección Sobre el Médico
+// Sección Sobre el Médico - Obtiene datos del doctor internamente
 
 import Container from '../ui/Container.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import { getEntry } from 'astro:content';
 
-interface Formation {
-  degree: string;
-  institution: string;
-  year: number;
-  country?: string;
-}
+// Obtener datos del doctor directamente desde Content Collections
+const doctorEntry = await getEntry('doctors', 'dr-dicampli');
+const doctor = doctorEntry?.data;
 
-interface Certification {
-  title: string;
-  institution: string;
-  year?: number;
-}
+// Extraer datos del doctor
+const name = doctor?.name || '';
+const doctorTitle = doctor?.title || 'Dr.';
+const biography = `${doctor?.title} ${doctor?.name} es un médico pediatra y alergólogo pediátrico con amplia experiencia en el diagnóstico y tratamiento de enfermedades alérgicas en niños y adolescentes.
 
-interface Props {
-  name: string;
-  title: string;
-  biography: string;
-  formation: Formation[];
-  certifications?: Certification[];
-  image?: ImageMetadata;
-  imageUrl?: string;
-  videoUrl?: string;
-  yearsExperience: number;
-  ctaText?: string;
-  ctaHref?: string;
-}
+Su formación académica incluye estudios de postgrado en prestigiosas instituciones internacionales como Johns Hopkins Hospital en Estados Unidos y la Universidad de Florencia en Italia.
 
-const {
-  name,
-  title,
-  biography,
-  formation,
-  certifications = [],
-  image,
-  imageUrl,
-  videoUrl,
-  yearsExperience,
-  ctaText = 'Agendar una Consulta',
-  ctaHref = '#contacto',
-} = Astro.props;
+Durante sus ${doctor?.experience} años de ejercicio profesional, ha atendido a miles de pacientes, desarrollando un enfoque integral y personalizado para cada caso. Su compromiso es brindar atención médica de excelencia, combinando los avances más recientes de la medicina con un trato humano y cercano.`;
+
+const formation = doctor?.formation || [];
+const certifications = doctor?.certifications || [];
+const yearsExperience = doctor?.experience || 0;
+
+// Hardcodear valores de CTA
+const ctaText = 'Agendar una Consulta';
+const ctaHref = '#contacto';
 
 // Mostrar solo las 3 formaciones más recientes
 const recentFormation = formation.sort((a, b) => b.year - a.year).slice(0, 3);
@@ -68,7 +47,7 @@ const recentFormation = formation.sort((a, b) => b.year - a.year).slice(0, 3);
 
         {/* Título */}
         <h2 class="text-3xl lg:text-4xl font-bold text-text mb-6">
-          {title}
+          {doctorTitle}
           <span class="text-primary">{name}</span>
         </h2>
 
@@ -119,35 +98,13 @@ const recentFormation = formation.sort((a, b) => b.year - a.year).slice(0, 3);
           {/* Contenido principal */}
           <div class="relative bg-surface rounded-2xl overflow-hidden shadow-xl">
             {
-              image ? (
-                <Image
-                  src={image}
-                  alt={`Foto profesional de ${title} ${name}`}
-                  class="w-full h-auto object-cover aspect-[4/5]"
-                  loading="lazy"
-                  widths={[400, 800]}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  width={image.width}
-                  height={image.height}
-                />
-              ) : imageUrl ? (
+              doctor?.photoProfile ? (
                 <img
-                  src={imageUrl}
-                  alt={`${title} ${name}`}
+                  src={doctor.photoProfile}
+                  alt={`Foto profesional de ${doctorTitle} ${name}`}
                   class="w-full h-auto object-cover aspect-[4/5]"
                   loading="lazy"
                 />
-              ) : videoUrl ? (
-                <div class="aspect-video bg-text rounded-2xl overflow-hidden">
-                  <iframe
-                    src={videoUrl}
-                    title={`Video presentación de ${title} ${name}`}
-                    class="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    loading="lazy"
-                  />
-                </div>
               ) : (
                 <div class="aspect-[4/5] bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
                   <div class="text-center p-8">
@@ -155,7 +112,7 @@ const recentFormation = formation.sort((a, b) => b.year - a.year).slice(0, 3);
                       <Icon name="stethoscope" size={64} class="text-primary" />
                     </div>
                     <p class="text-text-muted">
-                      {title} {name}
+                      {doctorTitle} {name}
                     </p>
                     <p class="text-sm text-text-muted mt-2">Foto profesional</p>
                   </div>

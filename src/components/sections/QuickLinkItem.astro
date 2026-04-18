@@ -15,7 +15,7 @@ const { icon, title, subtitle, dropdownId } = Astro.props;
 const uniqueId = dropdownId || `dropdown-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class="group relative">
+<div class="relative group">
   <button
     class="w-full p-4 lg:p-6 flex flex-col items-center text-center gap-2 lg:gap-3 hover:bg-primary/5 transition-colors"
     data-quicklink
@@ -33,12 +33,22 @@ const uniqueId = dropdownId || `dropdown-${Math.random().toString(36).substr(2, 
     <Icon name="chevron-down" size={14} class="text-text-muted group-hover:text-primary transition-colors lg:hidden" />
   </button>
 
-  {/* Dropdown */}
+  {/* Dropdown - fuera del flujo, se posiciona respecto al div relativo */}
   <div
     id={uniqueId}
-    class="hidden absolute top-full left-0 right-0 bg-surface shadow-xl border-t border-border z-50 p-4 lg:p-6 min-w-[300px] lg:left-auto lg:right-0 lg:w-80"
+    class="absolute top-full left-0 z-50 bg-surface shadow-xl border border-border rounded-xl p-4 lg:p-6 min-w-[320px] w-max max-w-[400px] opacity-0 pointer-events-none transition-all duration-200 translate-y-1"
     data-dropdown-content
   >
     <slot name="dropdown" />
   </div>
 </div>
+
+<style>
+  /* Cuando el grupo está en hover O el dropdown tiene la clase active */
+  .group:hover [data-dropdown-content],
+  [data-dropdown-content].active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+</style>

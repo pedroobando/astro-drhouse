@@ -1,5 +1,5 @@
 // src/content.config.ts - Astro 6 Content Collections Configuration
-import { defineCollection, image } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
@@ -49,6 +49,15 @@ const doctors = defineCollection({
         })
       )
       .optional(),
+    features: z
+      .array(
+        z.object({
+          icon: z.string(),
+          title: z.string(),
+          description: z.string(),
+        })
+      )
+      .optional(),
     theme: z.enum(['pediatra', 'ginecologo', 'cirujano', 'general', 'urologo']),
     photoProfile: z.string().optional(),
     contact: z.object({
@@ -69,6 +78,7 @@ const doctors = defineCollection({
           name: z.string(),
           address: z.string(),
           phone: z.string().optional(),
+          schedule: z.string().optional(),
         })
       )
       .optional(),
@@ -126,13 +136,14 @@ const gallery = defineCollection({
     base: './src/content/gallery',
     pattern: '**/*.md',
   }),
-  schema: ({ image }) => z.object({
-    image: image(),
-    caption: z.string(),
-    category: z.enum(['instalaciones', 'consulta', 'procedimiento']),
-    order: z.number(),
-    active: z.boolean().default(true),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      image: image(),
+      caption: z.string(),
+      category: z.enum(['instalaciones', 'consulta', 'procedimiento']),
+      order: z.number(),
+      active: z.boolean().default(true),
+    }),
 });
 
 // 6. Colección: Testimonios (Markdown)
