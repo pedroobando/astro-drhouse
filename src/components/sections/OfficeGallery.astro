@@ -193,8 +193,8 @@ const categoryColors: Record<string, string> = {
 }
 
 <script>
-  // Lightbox functionality
-  document.addEventListener('DOMContentLoaded', () => {
+  // Lightbox functionality - usa astro:page-load para View Transitions
+  function initLightbox() {
     const galleryItems = document.querySelectorAll('[data-gallery-item]');
     const lightbox = document.querySelector('[data-lightbox]');
     const lightboxImage = document.querySelector('[data-lightbox-image]') as HTMLImageElement;
@@ -203,6 +203,8 @@ const categoryColors: Record<string, string> = {
     const lightboxClose = document.querySelector('[data-lightbox-close]');
     const lightboxPrev = document.querySelector('[data-lightbox-prev]');
     const lightboxNext = document.querySelector('[data-lightbox-next]');
+
+    if (!galleryItems.length || !lightbox) return;
 
     let currentIndex = 0;
     const images = Array.from(galleryItems).map((item) => ({
@@ -217,14 +219,14 @@ const categoryColors: Record<string, string> = {
         lightboxCaption.textContent = images[index].caption;
         lightboxCurrent.textContent = String(index + 1);
       }
-      lightbox?.classList.remove('hidden');
-      lightbox?.classList.add('flex');
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
       document.body.style.overflow = 'hidden';
     }
 
     function closeLightbox() {
-      lightbox?.classList.add('hidden');
-      lightbox?.classList.remove('flex');
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
       document.body.style.overflow = '';
     }
 
@@ -255,8 +257,12 @@ const categoryColors: Record<string, string> = {
     });
 
     // Cerrar al hacer click fuera
-    lightbox?.addEventListener('click', (e) => {
+    lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) closeLightbox();
     });
-  });
+  }
+
+  // Ejecutar en carga inicial y en cada navegación SPA
+  initLightbox();
+  document.addEventListener('astro:page-load', initLightbox);
 </script>

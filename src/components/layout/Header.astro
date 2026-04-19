@@ -180,8 +180,8 @@ const whatsappLink = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, '')}` :
 <div class="h-16 lg:h-20"></div>
 
 <script>
-  // Mobile menu toggle
-  document.addEventListener('DOMContentLoaded', () => {
+  // Mobile menu toggle - compatible con View Transitions
+  function initMobileMenu() {
     const toggle = document.querySelector('[data-mobile-menu-toggle]');
     const menu = document.querySelector('[data-mobile-menu]');
     const overlay = document.querySelector('[data-mobile-overlay]');
@@ -221,5 +221,7 @@ const whatsappLink = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, '')}` :
 
       lastScroll = currentScroll;
     });
-  });
+  }
+  initMobileMenu();
+  document.addEventListener('astro:page-load', initMobileMenu);
 </script>

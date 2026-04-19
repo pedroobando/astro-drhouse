@@ -236,11 +236,13 @@ const googleMapUrl = mapUrl || 'https://maps.google.com/?q=Centro+Médico+Lecher
 </style>
 
 <script>
-  // Script minimalista - ya no necesitamos click handlers porque usamos CSS hover
-  document.addEventListener('DOMContentLoaded', () => {
+  // Dropdown initialization - compatible con View Transitions
+  function initDropdowns() {
     // Solo asegurar que los dropdowns estén cerrados al cargar
     document.querySelectorAll('[data-dropdown-content]').forEach((d) => {
       d.classList.remove('active');
     });
-  });
+  }
+  initDropdowns();
+  document.addEventListener('astro:page-load', initDropdowns);
 </script>

@@ -233,8 +233,8 @@ const whatsappLink = `https://wa.me/${whatsappNumber}`;
 </section>
 
 <script>
-  // Form validation and submission
-  document.addEventListener('DOMContentLoaded', () => {
+  // Form validation and submission - compatible con View Transitions
+  function initForm() {
     const form = document.getElementById('contact-form') as HTMLFormElement;
     const successMessage = document.getElementById('form-success');
     const errorMessage = document.getElementById('form-error');
@@ -307,5 +307,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}`;
         errorMessage?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
-  });
+  }
+  initForm();
+  document.addEventListener('astro:page-load', initForm);
 </script>

@@ -157,8 +157,8 @@ const rightFAQs = layout === 'two-column' ? faqs.slice(midPoint) : [];
 </section>
 
 <script>
-  // Accordion functionality
-  document.addEventListener('DOMContentLoaded', () => {
+  // Accordion functionality - compatible con View Transitions
+  function initAccordions() {
     const accordions = document.querySelectorAll('[data-accordion]');
     
     accordions.forEach((accordion) => {
@@ -183,5 +183,7 @@ const rightFAQs = layout === 'two-column' ? faqs.slice(midPoint) : [];
         }
       });
     });
-  });
+  }
+  initAccordions();
+  document.addEventListener('astro:page-load', initAccordions);
 </script>
